@@ -207,6 +207,12 @@
 
       <!-- Right: Action HUD Buttons -->
       <div class="flex items-center gap-2 flex-wrap">
+        <!-- View Only Mode Badge -->
+        <div id="viewOnlyBadge" class="flex items-center gap-1.5 bg-[#0a0e17] border border-slate-700/70 text-slate-400 text-xs font-tactical font-semibold px-2.5 py-1.5 rounded shadow-inner" title="You are in View-Only Mode">
+          <i class="fa-solid fa-eye text-cyan-400"></i>
+          <span class="hidden sm:inline">View-Only</span>
+        </div>
+
         <!-- Leader Mode Status / Auth Button -->
         <button onclick="requestLeaderAuth()" id="leaderAuthBtn" class="bg-[#121926] hover:bg-[#1a2337] border border-amber-500/40 text-amber-300 text-xs font-tactical font-bold px-2.5 py-1.5 rounded flex items-center gap-1.5 transition shadow-sm" title="Authenticate as Clan Leader / Co-Leader">
           <i class="fa-solid fa-shield-halved text-amber-400"></i>
@@ -218,7 +224,7 @@
           <button onclick="leaderLogout()" class="text-slate-400 hover:text-red-400 ml-1.5" title="Lock Leader Mode"><i class="fa-solid fa-lock text-[10px]"></i></button>
         </div>
 
-        <button onclick="openModal('draftMailModal')" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-3.5 py-1.5 rounded flex items-center gap-1.5">
+        <button onclick="openModal('draftMailModal')" id="clanMailBtn" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-3.5 py-1.5 rounded flex items-center gap-1.5">
           <i class="fa-solid fa-scroll text-sm"></i>
           <span>Clan Mail</span>
         </button>
@@ -228,7 +234,7 @@
           <span>Sync</span>
         </button>
 
-        <button onclick="openModal('settingsModal')" class="coc-btn-metal text-slate-300 hover:text-white text-xs w-8 h-8 rounded flex items-center justify-center" title="Manager Settings">
+        <button onclick="openModal('settingsModal')" id="settingsBtn" class="coc-btn-metal text-slate-300 hover:text-white text-xs w-8 h-8 rounded flex items-center justify-center" title="Manager Settings">
           <i class="fa-solid fa-sliders"></i>
         </button>
       </div>
@@ -874,7 +880,7 @@
             </h2>
             <p class="text-xs text-slate-400">Automated accountability tracking for missed attacks and raid leeching</p>
           </div>
-          <button onclick="showToast('Manual strike logged')" class="coc-btn-metal text-red-400 hover:text-red-300 font-bold text-xs px-3 py-1.5 rounded">
+          <button onclick="issueStrikeCommand()" class="coc-btn-metal text-red-400 hover:text-red-300 font-bold text-xs px-3 py-1.5 rounded">
             <i class="fa-solid fa-plus mr-1"></i> Issue Strike
           </button>
         </div>
@@ -914,8 +920,8 @@
                 <td class="py-2 px-2.5 text-slate-300">Missed 2nd war attack vs Nordic Vanguard</td>
                 <td class="py-2 px-2.5 font-mono text-slate-400">3 days ago</td>
                 <td class="py-2 px-2.5 text-right">
-                  <button onclick="showToast('Cleared Strike for GhostX')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
-                  <button onclick="showToast('GhostX benched from CWL')" class="text-red-400 hover:text-red-300 font-bold">Bench CWL</button>
+                  <button onclick="pardonStrikeCommand('GhostX')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
+                  <button onclick="benchStrikeCommand('GhostX')" class="text-red-400 hover:text-red-300 font-bold">Bench CWL</button>
                 </td>
               </tr>
               <tr class="hover:bg-[#121926] transition">
@@ -925,8 +931,8 @@
                 <td class="py-2 px-2.5 text-slate-300">Zero Raid Weekend hits logged</td>
                 <td class="py-2 px-2.5 font-mono text-slate-400">5 days ago</td>
                 <td class="py-2 px-2.5 text-right">
-                  <button onclick="showToast('Pardoned Vortex_99')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
-                  <button onclick="showToast('Warning sent to Vortex_99')" class="text-amber-400 hover:text-amber-300 font-bold">DM Warning</button>
+                  <button onclick="pardonStrikeCommand('Vortex_99')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
+                  <button onclick="warningStrikeCommand('Vortex_99')" class="text-amber-400 hover:text-amber-300 font-bold">DM Warning</button>
                 </td>
               </tr>
             </tbody>
@@ -2018,6 +2024,16 @@
           btnAction = `reassignBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
         }
 
+        const isAuth = isLeaderAuthenticated();
+        let cmdHtml = '';
+        if (bestAtk && bestAtk.stars === 3) {
+          cmdHtml = `<span class="text-emerald-400 font-mono font-bold text-[11px]"><i class="fa-solid fa-check mr-1"></i>Cleared</span>`;
+        } else if (!isAuth) {
+          cmdHtml = `<button onclick="requestLeaderAuth()" class="text-slate-500 hover:text-amber-400 font-mono text-[11px] inline-flex items-center gap-1 font-semibold" title="Leadership Clearance Required"><i class="fa-solid fa-lock text-[10px]"></i>View-Only</button>`;
+        } else {
+          cmdHtml = `<button onclick="${btnAction}" class="text-amber-400 hover:text-amber-300 font-bold">${btnText}</button>`;
+        }
+
         const tr = document.createElement("tr");
         tr.id = `base-row-${pos}`;
         tr.className = "hover:bg-[#121926] transition";
@@ -2029,7 +2045,7 @@
           <td class="py-2 px-2.5"><span class="callout-state ${stateClass} px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">${stateText}</span></td>
           <td class="py-2 px-2.5 ${isNeedsFill ? 'text-amber-400 font-bold' : 'text-slate-300 font-mono'} text-[11px]">${ccDesc}</td>
           <td class="py-2 px-2.5 text-right">
-            <button onclick="${btnAction}" class="text-amber-400 hover:text-amber-300 font-bold">${btnText}</button>
+            ${cmdHtml}
           </td>
         `;
         tbody.appendChild(tr);
@@ -2038,6 +2054,10 @@
 
     // Callout interactive commands
     function claimBase(baseNum, targetName) {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(() => claimBase(baseNum, targetName));
+        return;
+      }
       const row = document.getElementById(`base-row-${baseNum}`);
       if (row) {
         const stateEl = row.querySelector('.callout-state');
@@ -2089,6 +2109,38 @@
         return;
       }
       showToast('🛡️ Leadership alert dispatched to Discord for unfortified CCs!');
+    }
+
+    function issueStrikeCommand() {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(issueStrikeCommand);
+        return;
+      }
+      showToast('⚖️ Leadership: Strike logged into disciplinary record.');
+    }
+
+    function pardonStrikeCommand(player) {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(() => pardonStrikeCommand(player));
+        return;
+      }
+      showToast(`⚖️ Leadership: Pardon granted to ${player}. Strike cleared.`);
+    }
+
+    function benchStrikeCommand(player) {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(() => benchStrikeCommand(player));
+        return;
+      }
+      showToast(`⛔ Leadership: ${player} benched from CWL roster.`);
+    }
+
+    function warningStrikeCommand(player) {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(() => warningStrikeCommand(player));
+        return;
+      }
+      showToast(`⚠️ Leadership: Disciplinary warning dispatched to ${player}.`);
     }
 
     // Populate Dynamic TH Filter Dropdown
@@ -2630,12 +2682,21 @@
       const isAuth = isLeaderAuthenticated();
       const authBtn = document.getElementById('leaderAuthBtn');
       const activeBadge = document.getElementById('leaderActiveBadge');
+      const viewOnlyBadge = document.getElementById('viewOnlyBadge');
+
       if (isAuth) {
         if (authBtn) authBtn.classList.add('hidden');
         if (activeBadge) activeBadge.classList.remove('hidden');
+        if (viewOnlyBadge) viewOnlyBadge.classList.add('hidden');
       } else {
         if (authBtn) authBtn.classList.remove('hidden');
         if (activeBadge) activeBadge.classList.add('hidden');
+        if (viewOnlyBadge) viewOnlyBadge.classList.remove('hidden');
+      }
+
+      // Re-render War Room callouts to toggle view-only vs interactive commands
+      if (liveWar) {
+        renderWarCalloutsTable(liveWar);
       }
     }
 
