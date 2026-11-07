@@ -1,0 +1,20 @@
+{
+  "name": "clashmanager-pro",
+  "version": "1.0.0",
+  "description": "Elite Clash of Clans Clan Management & War Command Center",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "clash-of-clans",
+    "clan-manager",
+    "supercell-api",
+    "war-tracker"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

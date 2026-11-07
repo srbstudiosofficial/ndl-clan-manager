@@ -1,0 +1,13 @@
+{
+  "apiToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImJiODk5ODJmLTc0MmItNGE1Mi05ZDQzLWUzMGY3NWI5MjE1OCIsImlhdCI6MTc5Mzk1NjI5NSwic3ViIjoiZGV2ZWxvcGVyL2E5NTBmYzhhLTM5YzQtNGU4NS05MjFlLWQ0NGQyZTRiZDM4YyIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwMy43MC4zNy4xMSJdLCJ0eXBlIjoiY2xpZW50In1dfQ.hTpgyddiyfdA37gofb_u8eeB7GGybA1m0vHpBI5GIv5SIVN_x0vX2KAp9kTCbEXvLzwIjswNZijRw2DQgVBiLg",
+  "clanTag": "#2CVLCU8L9",
+  "demoMode": false,
+  "discordWebhookUrl": "https://discord.com/api/webhooks/1568196993493369008/6pT31sR5uAMkWBzgjqVVfaim4xOOmt0lD7z1kxodrhMvTzPQifI9drj6bVDYYV9GZc-W",
+  "discordRoleMention": "<@&1567197063039688866>",
+  "discordAlerts": {
+    "enabled": true,
+    "warAttacks": true,
+    "warPhases": true,
+    "slackerReminders": true
+  }
+}

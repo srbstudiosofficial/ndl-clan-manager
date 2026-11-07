@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NDL Clan Control Manager | Tactical Command HUD</title>
+  
+  <!-- Clan Favicon & Brand Icons -->
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="logo.png">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome 6 Pro-style icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Gaming Display Fonts: Teko (heavy condensed battle numbers), Cinzel Decorative (Clash clan headers), Rajdhani (military/tactical stats) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@500;600;700;800&family=Teko:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            clash: ['"Cinzel Decorative"', 'serif'],
+            battle: ['"Teko"', 'sans-serif'],
+            tactical: ['"Rajdhani"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            coc: {
+              bg: '#080a0f',
+              panel: '#0e121a',
+              panelBorder: '#1c2436',
+              metal: '#242e42',
+              bronze: '#8c5e2e',
+              gold: '#f59e0b',
+              goldLight: '#fde047',
+              crimson: '#dc2626',
+              darkElixir: '#7c3aed',
+              elixir: '#d946ef',
+              starBlue: '#38bdf8',
+              emerald: '#10b981'
+            }
+          },
+          boxShadow: {
+            'gold-bevel': 'inset 0 1px 0 rgba(253, 224, 71, 0.4), 0 2px 8px rgba(0,0,0,0.8)',
+            'panel-bevel': 'inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.8), 0 4px 14px rgba(0, 0, 0, 0.7)',
+            'glow-war': '0 0 18px rgba(245, 158, 11, 0.25)',
+            'glow-crimson': '0 0 18px rgba(220, 38, 38, 0.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* High density scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #080a0f; }
+    ::-webkit-scrollbar-thumb { background: #26334d; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3b4d70; }
+
+    /* Tactical Game Background: dark hex warfare grid */
+    body {
+      background-color: #07090d;
+      background-image: 
+        radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+        radial-gradient(rgba(28, 36, 54, 0.5) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px;
+    }
+
+    /* In-Game Chamfered Metal Frame */
+    .coc-frame {
+      background: linear-gradient(180deg, #131924 0%, #0c1017 100%);
+      border: 1px solid #202b3d;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 12px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.8);
+      position: relative;
+    }
+    .coc-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.5), transparent);
+    }
+
+    /* Metal Rivets in card corners */
+    .rivet-tl { position: absolute; top: 4px; left: 4px; width: 4px; height: 4px; border-radius: 50%; background: #40506e; box-shadow: inset 0 1px 1px #fff; }
+    .rivet-tr { position: absolute; top: 4px; right: 4px; width: 4px; height: 4px; border-radius: 50%; background: #40506e; box-shadow: inset 0 1px 1px #fff; }
+    .rivet-bl { position: absolute; bottom: 4px; left: 4px; width: 4px; height: 4px; border-radius: 50%; background: #40506e; box-shadow: inset 0 1px 1px #fff; }
+    .rivet-br { position: absolute; bottom: 4px; right: 4px; width: 4px; height: 4px; border-radius: 50%; background: #40506e; box-shadow: inset 0 1px 1px #fff; }
+
+    /* Clash In-Game Action Button */
+    .coc-btn-gold {
+      background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+      border: 1px solid #fef08a;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.6);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      transition: all 0.1s ease;
+    }
+    .coc-btn-gold:hover {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      transform: translateY(-1px);
+    }
+    .coc-btn-gold:active {
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .coc-btn-metal {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.6);
+      transition: all 0.1s ease;
+    }
+    .coc-btn-metal:hover {
+      background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+      border-color: #475569;
+    }
+    .coc-btn-metal:active {
+      transform: translateY(1px);
+    }
+
+    /* Pulsing battle indicator */
+    @keyframes pulse-intense {
+      0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 6px #f59e0b); }
+      50% { opacity: 0.6; transform: scale(0.92); filter: drop-shadow(0 0 1px #f59e0b); }
+    }
+    .pulse-war { animation: pulse-intense 1.8s infinite ease-in-out; }
+
+    /* Town Hall Specific Aesthetic Badges */
+    .th-badge-17 { background: linear-gradient(135deg, #0f2b38, #071924); border: 1px solid #06b6d4; color: #67e8f9; }
+    .th-badge-16 { background: linear-gradient(135deg, #2b1f0b, #191206); border: 1px solid #eab308; color: #fde047; }
+    .th-badge-15 { background: linear-gradient(135deg, #26113b, #150924); border: 1px solid #a855f7; color: #d8b4fe; }
+    .th-badge-14 { background: linear-gradient(135deg, #062e24, #031c16); border: 1px solid #10b981; color: #6ee7b7; }
+    .th-badge-13 { background: linear-gradient(135deg, #0c2a38, #061821); border: 1px solid #0ea5e9; color: #7dd3fc; }
+    .th-badge-12 { background: linear-gradient(135deg, #0d2138, #071324); border: 1px solid #3b82f6; color: #93c5fd; }
+    .th-badge-11 { background: linear-gradient(135deg, #2a1118, #18080c); border: 1px solid #f43f5e; color: #fda4af; }
+    .th-badge-10 { background: linear-gradient(135deg, #2b1408, #170a04); border: 1px solid #f97316; color: #fdba74; }
+    .th-badge-low { background: linear-gradient(135deg, #18202d, #0d121a); border: 1px solid #475569; color: #cbd5e1; }
+  </style>
+</head>
+
+<body class="text-slate-200 font-tactical min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+  <!-- ================= TOP CLASH TACTICAL HUD ================= -->
+  <header class="sticky top-0 z-50 bg-[#0a0d14]/95 border-b-2 border-[#1c2536] backdrop-blur-md px-3 sm:px-6 py-2 shadow-2xl">
+    <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Left: Clan Identity Shield + Metadata -->
+      <div class="flex items-center gap-3">
+        <!-- Official NAADAN LEGACY Esports Crest & Level Badge -->
+        <div class="relative flex-shrink-0 cursor-pointer group" title="NAADAN LEGACY ESPORTS">
+          <div class="w-12 h-14 bg-gradient-to-b from-amber-400 via-amber-600 to-amber-950 p-[2px] rounded-b-xl border border-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.35)] flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.6)]">
+            <div class="w-full h-full bg-[#0d111a] rounded-b-[10px] flex flex-col items-center justify-center relative overflow-hidden">
+              <img src="logo.png" alt="NAADAN LEGACY Logo" class="w-full h-full object-cover rounded-b-[10px]" onerror="this.onerror=null; this.src='logo.jpg';">
+            </div>
+          </div>
+          <!-- Level 1 Badge -->
+          <span class="absolute -bottom-1 -right-1 bg-amber-400 text-[#0a0d14] font-black font-battle text-xs px-1.5 py-0.2 rounded border border-amber-200 shadow-md">LVL 1</span>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="font-clash text-2xl font-black text-white tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">NDL</h1>
+            
+            <!-- Exact Clan Tag + 1-Click Copy -->
+            <button onclick="copyClanTag('#2CVLCU8L9')" title="Click to copy Clan Tag" class="font-mono text-xs bg-[#111724] text-amber-400 px-2 py-0.5 rounded border border-amber-500/40 hover:border-amber-400 flex items-center gap-1.5 transition active:scale-95 shadow-inner">
+              <i class="fa-solid fa-hashtag text-[10px] text-amber-400/70"></i>2CVLCU8L9
+              <i class="fa-regular fa-copy text-[11px] text-slate-400 hover:text-white"></i>
+            </button>
+
+            <!-- Live Status HUD Pill -->
+            <div id="apiStatusPill" onclick="openModal('settingsModal')" class="cursor-pointer flex items-center gap-1.5 bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-500/50 px-2 py-0.5 rounded text-[11px] font-mono font-bold text-emerald-400 transition" title="Click to view API & IP Status">
+              <span id="apiStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 pulse-war"></span>
+              <span id="apiStatusText">LIVE AUTO-SYNC</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 font-semibold tracking-wide flex items-center gap-1.5">
+            <i class="fa-solid fa-crosshairs text-amber-500 text-[10px]"></i>
+            <span class="text-amber-200/90 italic">A Legacy for Eternity!!!</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Center: Quick War Alert Ticker -->
+      <div class="hidden lg:flex items-center gap-4 bg-[#0e1420] border border-[#222e44] px-4 py-1.5 rounded-lg shadow-inner">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-khanda text-amber-400 text-sm"></i>
+          <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Current War:</span>
+          <span id="headerWarMatchup" class="font-bold text-white">N D L vs solo player</span>
+        </div>
+        <div class="h-4 w-[1px] bg-slate-700"></div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          <span id="headerWarCountdown" class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+            PREP DAY: CALCULATING...
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: Action HUD Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="openModal('draftMailModal')" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-3.5 py-1.5 rounded flex items-center gap-1.5">
+          <i class="fa-solid fa-scroll text-sm"></i>
+          <span>Clan Mail</span>
+        </button>
+
+        <button onclick="triggerRefresh()" id="refreshBtn" class="coc-btn-metal text-slate-200 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5">
+          <i id="refreshIcon" class="fa-solid fa-rotate text-amber-400"></i>
+          <span>Sync</span>
+        </button>
+
+        <button onclick="openModal('settingsModal')" class="coc-btn-metal text-slate-300 hover:text-white text-xs w-8 h-8 rounded flex items-center justify-center" title="Manager Settings">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= DYNAMIC IP MISMATCH ALERT BANNER ================= -->
+  <div id="ipAlertBanner" class="bg-gradient-to-r from-red-950 via-[#1a0e14] to-red-950 border-b-2 border-red-500 px-4 py-2.5 text-center text-xs font-tactical text-slate-200 shadow-lg">
+    <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 text-left">
+        <span class="w-3 h-3 rounded-full bg-red-500 animate-ping flex-shrink-0"></span>
+        <div>
+          <span class="font-bold text-red-400 uppercase tracking-wide">⚠️ Supercell Live API Disconnected (403 Forbidden):</span>
+          <span class="text-slate-300 ml-1">Your ISP changed your Public IP to <code id="ipAlertIp" class="bg-black/80 px-2 py-0.5 rounded font-mono text-amber-300 font-bold border border-amber-500/40">103.175.2.152</code>. Add it to your Supercell Dev key to resume real-time war attacks & member updates!</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button onclick="copyIpAddress()" class="coc-btn-metal text-white font-bold px-3 py-1 rounded text-xs flex items-center gap-1.5 border border-slate-600">
+          <i class="fa-regular fa-copy text-amber-400"></i> Copy IP (103.175.2.152)
+        </button>
+        <a href="https://developer.clashofclans.com" target="_blank" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-3.5 py-1 rounded flex items-center gap-1">
+          <span>Open Dev Portal</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+        <button onclick="openModal('settingsModal')" class="bg-[#1c273a] hover:bg-[#25344d] text-amber-300 border border-amber-500/40 font-bold px-3 py-1 rounded text-xs">
+          Paste New Key
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+  <!-- ================= SUB-NAVIGATION TABS ================= -->
+  <nav class="bg-[#0b0e14] border-b border-[#18202f] px-3 sm:px-6">
+    <div class="max-w-[1440px] mx-auto flex items-center gap-1 overflow-x-auto no-scrollbar py-1.5 text-xs font-bold uppercase tracking-wider">
+      
+      <button onclick="switchTab('overviewTab')" id="tab-overviewTab" class="tab-btn px-4 py-1.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-2">
+        <i class="fa-solid fa-gauge-high"></i> Command Deck
+      </button>
+
+      <button onclick="switchTab('warRoomTab')" id="tab-warRoomTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
+        <i class="fa-solid fa-swords text-amber-400"></i> War Callouts Matrix
+        <span class="font-mono text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30">15v15</span>
+      </button>
+
+      <button onclick="switchTab('rosterTab')" id="tab-rosterTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
+        <i class="fa-solid fa-users"></i> Member Roster
+        <span id="tabRosterBadge" class="font-mono text-[10px] bg-[#1a2336] text-cyan-300 px-1.5 py-0.2 rounded">22/50</span>
+      </button>
+
+      <button onclick="switchTab('strikesTab')" id="tab-strikesTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
+        <i class="fa-solid fa-gavel text-red-400"></i> Strike Radar
+        <span class="font-mono text-[10px] bg-red-950/80 text-red-300 px-1.5 py-0.2 rounded border border-red-500/40">2 Active</span>
+      </button>
+
+      <button onclick="switchTab('discordTab')" id="tab-discordTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
+        <i class="fa-brands fa-discord text-[#5865F2]"></i> Bot Automations
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ================= MAIN HUD CONTAINER ================= -->
+  <main class="flex-grow max-w-[1440px] w-full mx-auto px-3 sm:px-6 py-4 space-y-4">
+
+    <!-- Global Toast Alert -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-16 opacity-0 transition-all duration-200 flex items-center gap-3 bg-[#111724] border-2 border-amber-500 text-amber-300 px-4 py-2.5 rounded shadow-2xl">
+      <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base"></i>
+      <span id="toastMsg" class="font-tactical font-bold text-xs uppercase tracking-wide">Operation Completed</span>
+    </div>
+
+    <!-- #################### TAB 1: COMMAND DECK (HIGH DENSITY OVERVIEW) #################### -->
+    <div id="overviewTab" class="tab-content space-y-4">
+
+      <!-- TOP METRIC HUD STRIP (4 Compact High-Density Panels) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        
+        <!-- Metric 1: Clan Points & BB -->
+        <div class="coc-frame rounded-lg p-3 relative">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
+            <span>Clan Points</span>
+            <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
+          </div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-battle text-3xl font-bold text-amber-400 tracking-wide leading-none">11,200</span>
+            <span class="text-[10px] text-slate-400 font-mono">TROPHIES</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+            <span>Builder Base:</span>
+            <span class="font-mono text-slate-200 font-bold">14,349 ⚙</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: War Record & Streak -->
+        <div class="coc-frame rounded-lg p-3 relative">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
+            <span>War Record</span>
+            <span class="font-mono text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 rounded border border-emerald-500/40">100% WR</span>
+          </div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="font-battle text-3xl font-bold text-emerald-400 leading-none">1W</span>
+            <span class="text-slate-600 font-bold text-xl">-</span>
+            <span class="font-battle text-3xl font-bold text-slate-500 leading-none">0L</span>
+            <span class="text-[10px] text-slate-400 font-mono">1 DRAW</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+            <span>Win Streak:</span>
+            <span class="font-mono text-emerald-400 font-bold">1 WAR 🔥</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Clan Capacity & Recruitment -->
+        <div class="coc-frame rounded-lg p-3 relative">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
+            <span>Roster Size</span>
+            <span class="text-[10px] text-cyan-400 font-mono">OPEN</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span id="deckRosterCount" class="font-battle text-3xl font-bold text-cyan-300 leading-none">22</span>
+            <span class="text-slate-500 font-bold font-battle text-xl">/ 50</span>
+            <span id="deckSlotsCount" class="text-[10px] text-slate-400 font-mono ml-auto">28 SLOTS AVAILABLE</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+            <span>Entry Req:</span>
+            <span class="font-mono text-slate-200 font-bold">TH 1 • 0 Trophies</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: Clan Capital -->
+        <div class="coc-frame rounded-lg p-3 relative">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
+            <span>Clan Capital</span>
+            <span class="text-[10px] text-purple-400 font-mono">RAIDS</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span class="font-battle text-2xl font-bold text-purple-300 leading-none">Unlocks at Lv 2</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+            <span>War League:</span>
+            <span class="font-mono text-amber-500 font-bold">Unranked (Pre-CWL)</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AUTHENTIC LIVE WAR HUD SCOREBOARD (Compact, Tug-of-War Bar) -->
+      <div class="coc-frame rounded-lg p-3.5 border-t-2 border-t-amber-500 shadow-glow-war relative">
+        <div class="rivet-tl"></div><div class="rivet-tr"></div><div class="rivet-bl"></div><div class="rivet-br"></div>
+
+        <!-- Top Ticker Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#1c273b]">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 pulse-war"></span>
+            <span id="scoreboardWarTitle" class="font-clash text-base font-black text-white tracking-wide">ACTIVE WAR: 15 VS 15</span>
+            <span id="scoreboardWarStateBadge" class="bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase animate-pulse">BATTLE DAY LIVE</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-mono">
+            <span id="scoreboardCountdownLabel" class="text-slate-400 font-semibold">WAR CLOSES IN:</span>
+            <span id="scoreboardCountdownTimer" class="bg-[#0b0e14] text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/30">
+              <i class="fa-regular fa-clock mr-1"></i>CALCULATING...
+            </span>
+          </div>
+        </div>
+
+        <!-- Scoreboard Center Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center py-3">
+          
+          <!-- NDL Team Block (5 Cols) -->
+          <div class="md:col-span-5 flex items-center gap-3 bg-[#0c1017] p-2.5 rounded border border-[#1b2538]">
+            <div class="w-12 h-12 rounded-lg bg-[#101724] border border-amber-500/60 p-0.5 flex-shrink-0 overflow-hidden relative shadow-[0_0_10px_rgba(245,158,11,0.25)]">
+              <img src="logo.png" alt="NDL Logo" class="w-full h-full object-cover rounded" onerror="this.onerror=null; this.src='logo.jpg';">
+              <span class="absolute bottom-0 right-0 bg-amber-500 text-black text-[9px] font-battle font-black px-1 rounded-tl leading-none">LVL 1</span>
+            </div>
+            <div class="flex-grow">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-clash text-lg font-black text-white">NDL</span>
+                  <span class="text-[10px] font-battle text-amber-400 tracking-wider">NAADAN LEGACY</span>
+                </div>
+                <span id="ndlAttacksCount" class="font-mono text-xs text-amber-400 font-bold">5 / 30 Attacks</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <div class="flex items-center gap-1">
+                  <span id="ndlStarsCount" class="font-battle text-3xl font-black text-amber-400 leading-none">12</span>
+                  <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                </div>
+                <span id="ndlDestructionPct" class="font-mono text-sm font-bold text-slate-300">30.7% DMG</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tug-of-War Center Divider (2 Cols) -->
+          <div class="md:col-span-2 flex flex-col items-center justify-center text-center">
+            <div class="w-8 h-8 rounded bg-[#141d2c] border border-amber-500/40 flex items-center justify-center font-clash font-black text-amber-400 text-xs shadow-inner">
+              VS
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest mt-1">MIRROR MATCH</span>
+          </div>
+
+          <!-- Opponent Team Block (5 Cols) -->
+          <div class="md:col-span-5 flex items-center gap-3 bg-[#0c1017] p-2.5 rounded border border-[#1b2538] justify-between">
+            <div class="flex-grow text-right order-1">
+              <div class="flex items-center justify-between">
+                <span id="oppAttacksCount" class="font-mono text-xs text-red-400 font-bold">0 / 30 Attacks</span>
+                <span id="oppClanName" class="font-clash text-lg font-black text-slate-200">solo player</span>
+              </div>
+              <div class="flex items-center justify-between mt-0.5">
+                <span id="oppDestructionPct" class="font-mono text-sm font-bold text-slate-300">0.0% DMG</span>
+                <div class="flex items-center gap-1">
+                  <span id="oppStarsCount" class="font-battle text-3xl font-black text-slate-400 leading-none">0</span>
+                  <i class="fa-solid fa-star text-slate-500 text-xs"></i>
+                </div>
+              </div>
+            </div>
+            <div class="w-12 h-12 rounded bg-[#101724] border border-red-500/50 flex flex-col items-center justify-center p-1 flex-shrink-0 order-2">
+              <i class="fa-solid fa-shield text-red-400 text-xl"></i>
+              <span id="oppClanLevelBadge" class="text-[9px] font-battle text-red-300 font-bold">LVL 5</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tug-of-war visual destruction progress bar -->
+        <div class="w-full bg-[#0a0d14] h-2 rounded overflow-hidden flex border border-[#1a2334]">
+          <div id="warTugBarNdl" class="bg-amber-400 h-full transition-all" style="width: 100%" title="NDL Destruction: 30.7%"></div>
+          <div id="warTugBarOpp" class="bg-red-500 h-full transition-all" style="width: 0%" title="solo player Destruction: 0.0%"></div>
+        </div>
+
+        <!-- Scoreboard Footer Controls -->
+        <div class="mt-2.5 pt-2 border-t border-[#1c273b] flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+            <span>3 Clan Castles remain unfortified. Fill friendly CC troops before Battle Day starts!</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="switchTab('warRoomTab')" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 bg-[#131a26] px-2.5 py-1 rounded border border-amber-500/40">
+              <span>Enter Tactical Matrix</span>
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- HIGH DENSITY 2-COLUMN SPLIT: DONATION ENGINE & ACTIVITY FEED -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+
+        <!-- Column Left: Top Donators & Real Balance Delta (7 Cols) -->
+        <div class="lg:col-span-7 coc-frame rounded-lg p-3 relative flex flex-col justify-between">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-[#1c2638]">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-hand-holding-hand text-amber-400"></i>
+                <h3 class="font-clash text-sm font-bold text-white uppercase tracking-wider">Donation Matrix</h3>
+              </div>
+              <span class="font-mono text-[10px] text-slate-400 bg-[#0a0d14] px-2 py-0.5 rounded border border-[#1e293b]">SEASON CURRENT</span>
+            </div>
+
+            <!-- Compact Zebra Donation List (Dynamic Live) -->
+            <div id="topDonatorsList" class="mt-2 space-y-1">
+              <!-- Rendered dynamically by renderTopDonators() -->
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-[#1c2638] mt-2 flex items-center justify-between text-xs text-slate-400">
+            <span>Healthy Donators (Ratio ≥ 1.0): <strong id="healthyDonatorsCount" class="text-emerald-400 font-mono">14</strong></span>
+            <span>Healthy Donators (Ratio ≥ 1.0): <strong class="text-emerald-400 font-mono">14</strong></span>
+            <button onclick="switchTab('rosterTab')" class="text-amber-400 hover:text-amber-300 font-bold">Full Roster &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Column Right: Tactical Ratios & Automated Actions (5 Cols) -->
+        <div class="lg:col-span-5 coc-frame rounded-lg p-3 relative flex flex-col justify-between">
+          <div class="rivet-tl"></div><div class="rivet-tr"></div>
+          <div>
+            <div class="flex items-center justify-between pb-2 border-b border-[#1c2638]">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-radar text-cyan-400"></i>
+                <h3 class="font-clash text-sm font-bold text-white uppercase tracking-wider">Clan Health & Discipline</h3>
+              </div>
+              <span class="font-mono text-[10px] text-emerald-400 bg-emerald-950/70 border border-emerald-500/40 px-1.5 py-0.2 rounded font-bold">OPTIMAL</span>
+            </div>
+
+            <!-- Compact segmented health bar -->
+            <div class="mt-3 space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                <span>Roster Donation Equilibrium</span>
+                <span id="healthActivePct" class="font-mono text-white">68.2% Active</span>
+              </div>
+              <div class="w-full h-2 rounded bg-[#0a0d14] overflow-hidden flex border border-[#1b2538]">
+                <div id="healthBarBalanced" style="width: 68.2%" class="bg-emerald-500 h-full transition-all"></div>
+                <div id="healthBarLeech" style="width: 31.8%" class="bg-amber-500 h-full transition-all"></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
+                <span class="text-emerald-400">● 14 Balanced (≥1.0)</span>
+                <span class="text-amber-400">● 7 Leech Alert (<0.5)</span>
+                <span class="text-red-400">● 0 Inactive</span>
+              </div>
+            </div>
+
+            <!-- Tactical Notice Dispatch Box -->
+            <div class="mt-3 bg-[#0a0d14] border border-[#1e2a3d] rounded p-2.5 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <i class="fa-solid fa-bell text-amber-400"></i> War Lock Notification
+                </span>
+                <span class="text-[10px] font-mono text-amber-400">Pending</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-tight">
+                7 members have low contribution ratios. Dispatch warning before War Castles lock.
+              </p>
+              <div class="pt-1 flex justify-end">
+                <button onclick="openModal('draftMailModal')" class="coc-btn-gold text-[#111724] font-tactical text-xs font-black px-3 py-1 rounded uppercase tracking-wider">
+                  Draft Notice
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pt-2 border-t border-[#1c2638] mt-2 flex items-center justify-between text-[11px] text-slate-400">
+            <span class="font-mono text-cyan-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Discord Bot Synced
+            </span>
+            <span class="font-mono text-slate-500">Ping: 32ms</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- #################### TAB 2: WAR CALLOUT MATRIX #################### -->
+    <div id="warRoomTab" class="tab-content hidden space-y-3">
+      <div class="coc-frame rounded-lg p-3.5 relative">
+        <div class="rivet-tl"></div><div class="rivet-tr"></div>
+        
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#1c2638]">
+          <div>
+            <h2 class="font-clash text-lg font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-khanda text-amber-400"></i> War Callouts & Target Reservation
+            </h2>
+            <p class="text-xs text-slate-400">15v15 Matchup vs 'solo player' • Call your mirror or cleanup target</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="showToast('Alert dispatched to Discord for unfortified CCs!')" class="coc-btn-metal text-amber-300 text-xs font-bold px-3 py-1.5 rounded">
+              <i class="fa-solid fa-shield-halved mr-1"></i> Ping Unfilled CCs
+            </button>
+            <button onclick="showToast('Callout lock confirmed and recorded.')" class="coc-btn-gold text-[#111724] text-xs font-black uppercase px-3 py-1.5 rounded">
+              <i class="fa-solid fa-lock mr-1"></i> Lock Roster
+            </button>
+          </div>
+        </div>
+
+        <!-- High Density Base Assignment Table -->
+        <div class="overflow-x-auto mt-2">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 uppercase font-mono tracking-wider border-b border-[#1c2638] text-[11px] bg-[#090c12]">
+              <tr>
+                <th class="py-2 px-2.5">Base</th>
+                <th class="py-2 px-2.5">Opponent Target</th>
+                <th class="py-2 px-2.5">Town Hall</th>
+                <th class="py-2 px-2.5">Assigned Clanmate</th>
+                <th class="py-2 px-2.5">Callout State</th>
+                <th class="py-2 px-2.5">Defensive CC Status</th>
+                <th class="py-2 px-2.5 text-right">Command</th>
+              </tr>
+            </thead>
+            <tbody id="warCalloutsTableBody" class="divide-y divide-[#151d2a] text-slate-300 font-tactical">
+              
+              <!-- #01 -->
+              <tr id="base-row-1" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#01</td>
+                <td class="py-2 px-2.5 font-bold text-white">kulotske</td>
+                <td class="py-2 px-2.5"><span class="th-badge-15 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 15</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">leetsu</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-emerald-950 text-emerald-400 border border-emerald-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">LOCKED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Super Minion, 2x Ice Golem</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(1, 'kulotske')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #02 -->
+              <tr id="base-row-2" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#02</td>
+                <td class="py-2 px-2.5 font-bold text-white">mark</td>
+                <td class="py-2 px-2.5"><span class="th-badge-15 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 15</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">AK</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-emerald-950 text-emerald-400 border border-emerald-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">LOCKED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">Electro Titan + Rocket Loons</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(2, 'mark')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #03 -->
+              <tr id="base-row-3" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#03</td>
+                <td class="py-2 px-2.5 font-bold text-white">paralulo</td>
+                <td class="py-2 px-2.5"><span class="th-badge-15 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 15</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">MAD</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-amber-400 font-bold text-[11px]">⚠️ CC Empty (Needs Fill)</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(3, 'paralulo')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #04 -->
+              <tr id="base-row-4" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#04</td>
+                <td class="py-2 px-2.5 font-bold text-white">utugan</td>
+                <td class="py-2 px-2.5"><span class="th-badge-13 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 13</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">zenin</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">2x Super Dragon</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(4, 'utugan')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #05 -->
+              <tr id="base-row-5" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#05</td>
+                <td class="py-2 px-2.5 font-bold text-white">butoon</td>
+                <td class="py-2 px-2.5"><span class="th-badge-13 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 13</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">BLACK 777</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Hound, 3x Balloon</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(5, 'butoon')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #06 -->
+              <tr id="base-row-6" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#06</td>
+                <td class="py-2 px-2.5 font-bold text-white">boss</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 12</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">Eric Eagle</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-slate-800 text-slate-300 border border-slate-600 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">OPEN</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">Hound + Balloon</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="claimBase(6, 'boss')" class="text-amber-400 hover:text-amber-300 font-bold">Claim Base</button>
+                </td>
+              </tr>
+
+              <!-- #07 -->
+              <tr id="base-row-7" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#07</td>
+                <td class="py-2 px-2.5 font-bold text-white">ayaw kol baPako</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 12</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">DR_METTALIOED</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">Super Minions + Headhunter</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(7, 'ayaw kol baPako')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #08 -->
+              <tr id="base-row-8" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#08</td>
+                <td class="py-2 px-2.5 font-bold text-white">jacolero2</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 12</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">AEGON XD</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-slate-800 text-slate-300 border border-slate-600 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">OPEN</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">2x Witch, 3x Archer</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="claimBase(8, 'jacolero2')" class="text-amber-400 hover:text-amber-300 font-bold">Claim Base</button>
+                </td>
+              </tr>
+
+              <!-- #09 -->
+              <tr id="base-row-9" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#09</td>
+                <td class="py-2 px-2.5 font-bold text-white">paraluci 2</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 12</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">么RAVEN</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Ice Golem, 1x Witch</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(9, 'paraluci 2')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #10 -->
+              <tr id="base-row-10" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#10</td>
+                <td class="py-2 px-2.5 font-bold text-white">paraluci</td>
+                <td class="py-2 px-2.5"><span class="th-badge-11 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 11</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">D@R3 TO REVENG3</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-slate-800 text-slate-300 border border-slate-600 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">OPEN</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Electro Dragon</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="claimBase(10, 'paraluci')" class="text-amber-400 hover:text-amber-300 font-bold">Claim Base</button>
+                </td>
+              </tr>
+
+              <!-- #11 -->
+              <tr id="base-row-11" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#11</td>
+                <td class="py-2 px-2.5 font-bold text-white">bossrey12</td>
+                <td class="py-2 px-2.5"><span class="th-badge-11 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 11</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">Son of Landings</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">2x Super Valkyrie</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(11, 'bossrey12')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #12 -->
+              <tr id="base-row-12" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#12</td>
+                <td class="py-2 px-2.5 font-bold text-white">giatay ka</td>
+                <td class="py-2 px-2.5"><span class="th-badge-10 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 10</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">urumb_SuLu</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Baby Dragon, 2x Valk</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(12, 'giatay ka')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #13 -->
+              <tr id="base-row-13" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#13</td>
+                <td class="py-2 px-2.5 font-bold text-white">salsalako</td>
+                <td class="py-2 px-2.5"><span class="th-badge-low font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 9</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">D X G</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-slate-800 text-slate-300 border border-slate-600 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">OPEN</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Dragon, 1x Loon</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="claimBase(13, 'salsalako')" class="text-amber-400 hover:text-amber-300 font-bold">Claim Base</button>
+                </td>
+              </tr>
+
+              <!-- #14 -->
+              <tr id="base-row-14" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#14</td>
+                <td class="py-2 px-2.5 font-bold text-white">sa puso ng maha</td>
+                <td class="py-2 px-2.5"><span class="th-badge-low font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 7</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">VENUS</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Baby Dragon, 3x Wizard</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(14, 'sa puso ng maha')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+              <!-- #15 -->
+              <tr id="base-row-15" class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#15</td>
+                <td class="py-2 px-2.5 font-bold text-white">reymark</td>
+                <td class="py-2 px-2.5"><span class="th-badge-low font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 7</span></td>
+                <td class="py-2 px-2.5 font-bold text-cyan-300">Draiven</td>
+                <td class="py-2 px-2.5"><span class="callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">CLAIMED</span></td>
+                <td class="py-2 px-2.5 text-slate-300 font-mono text-[11px]">1x Valkyrie, 3x Archer</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="reassignBase(15, 'reymark')" class="text-amber-400 hover:text-amber-300 font-bold">Reassign</button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- #################### TAB 3: MEMBER ROSTER #################### -->
+    <div id="rosterTab" class="tab-content hidden space-y-3">
+      <div class="coc-frame rounded-lg p-3.5 relative">
+        <div class="rivet-tl"></div><div class="rivet-tr"></div>
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#1c2638]">
+          <div>
+            <h2 class="font-clash text-lg font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-users-gear text-amber-400"></i> Roster & Tactical Stats
+            </h2>
+            <p id="rosterSubtitle" class="text-xs text-slate-400">22 Members Recorded • Supercell API Realtime Roster</p>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+              <input type="text" id="rosterSearchInput" oninput="filterRoster()" placeholder="Search player or #tag..." 
+                     class="bg-[#090c12] border border-[#1e2a3d] rounded pl-8 pr-3 py-1 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+            </div>
+
+            <select id="thFilterSelect" onchange="filterRoster()" class="bg-[#090c12] border border-[#1e2a3d] rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="ALL">All Town Halls</option>
+              <option value="17">TH 17</option>
+              <option value="15">TH 15</option>
+              <option value="12">TH 12</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filterable Roster Table -->
+        <div class="overflow-x-auto mt-2">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 uppercase font-mono tracking-wider border-b border-[#1c2638] text-[11px] bg-[#090c12]">
+              <tr>
+                <th class="py-2 px-2.5">Member</th>
+                <th class="py-2 px-2.5">Role</th>
+                <th class="py-2 px-2.5">Town Hall</th>
+                <th class="py-2 px-2.5">Trophies</th>
+                <th class="py-2 px-2.5">Donated</th>
+                <th class="py-2 px-2.5">Received</th>
+                <th class="py-2 px-2.5">Balance Ratio</th>
+                <th class="py-2 px-2.5">War Pref</th>
+                <th class="py-2 px-2.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rosterTableBody" class="divide-y divide-[#151d2a] text-slate-300 font-tactical">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- #################### TAB 4: STRIKE LEDGER #################### -->
+    <div id="strikesTab" class="tab-content hidden space-y-3">
+      <div class="coc-frame rounded-lg p-3.5 relative">
+        <div class="rivet-tl"></div><div class="rivet-tr"></div>
+        
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#1c2638]">
+          <div>
+            <h2 class="font-clash text-lg font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-gavel text-red-500"></i> Disciplinary & Strike Ledger
+            </h2>
+            <p class="text-xs text-slate-400">Automated accountability tracking for missed attacks and raid leeching</p>
+          </div>
+          <button onclick="showToast('Manual strike logged')" class="coc-btn-metal text-red-400 hover:text-red-300 font-bold text-xs px-3 py-1.5 rounded">
+            <i class="fa-solid fa-plus mr-1"></i> Issue Strike
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 my-3">
+          <div class="bg-[#0a0d14] p-2.5 rounded border border-amber-500/30">
+            <span class="text-amber-400 font-bold text-xs uppercase font-mono block">Strike 1: Warning</span>
+            <span class="text-[11px] text-slate-400">Automated Discord DM alert dispatched immediately.</span>
+          </div>
+          <div class="bg-[#0a0d14] p-2.5 rounded border border-orange-500/30">
+            <span class="text-orange-400 font-bold text-xs uppercase font-mono block">Strike 2: CWL Bench</span>
+            <span class="text-[11px] text-slate-400">Excluded from active CWL rosters and regular wars for 7 days.</span>
+          </div>
+          <div class="bg-[#0a0d14] p-2.5 rounded border border-red-500/40">
+            <span class="text-red-400 font-bold text-xs uppercase font-mono block">Strike 3: Kick Queue</span>
+            <span class="text-[11px] text-slate-400">Queued for leadership review and expulsion before season end.</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 uppercase font-mono tracking-wider border-b border-[#1c2638] text-[11px] bg-[#090c12]">
+              <tr>
+                <th class="py-2 px-2.5">Player</th>
+                <th class="py-2 px-2.5">Town Hall</th>
+                <th class="py-2 px-2.5">Strikes</th>
+                <th class="py-2 px-2.5">Infraction Reason</th>
+                <th class="py-2 px-2.5">Logged Date</th>
+                <th class="py-2 px-2.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#151d2a] text-slate-300 font-tactical">
+              <tr class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-bold text-white">GhostX</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 12</span></td>
+                <td class="py-2 px-2.5"><span class="font-mono text-red-400 font-bold bg-red-950 px-2 py-0.5 rounded border border-red-500/40">2 / 3</span></td>
+                <td class="py-2 px-2.5 text-slate-300">Missed 2nd war attack vs Nordic Vanguard</td>
+                <td class="py-2 px-2.5 font-mono text-slate-400">3 days ago</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="showToast('Cleared Strike for GhostX')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
+                  <button onclick="showToast('GhostX benched from CWL')" class="text-red-400 hover:text-red-300 font-bold">Bench CWL</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-[#121926] transition">
+                <td class="py-2 px-2.5 font-bold text-white">Vortex_99</td>
+                <td class="py-2 px-2.5"><span class="th-badge-12 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH 11</span></td>
+                <td class="py-2 px-2.5"><span class="font-mono text-amber-400 font-bold bg-amber-950 px-2 py-0.5 rounded border border-amber-500/40">1 / 3</span></td>
+                <td class="py-2 px-2.5 text-slate-300">Zero Raid Weekend hits logged</td>
+                <td class="py-2 px-2.5 font-mono text-slate-400">5 days ago</td>
+                <td class="py-2 px-2.5 text-right">
+                  <button onclick="showToast('Pardoned Vortex_99')" class="text-slate-400 hover:text-white mr-2">Pardon</button>
+                  <button onclick="showToast('Warning sent to Vortex_99')" class="text-amber-400 hover:text-amber-300 font-bold">DM Warning</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- #################### TAB 5: DISCORD BOT INTEGRATION #################### -->
+    <div id="discordTab" class="tab-content hidden space-y-3">
+      <div class="coc-frame rounded-lg p-3.5 relative">
+        <div class="rivet-tl"></div><div class="rivet-tr"></div>
+        
+        <div class="flex items-center justify-between pb-3 border-b border-[#1c2638]">
+          <div>
+            <h2 class="font-clash text-lg font-black text-white flex items-center gap-2">
+              <i class="fa-brands fa-discord text-[#5865F2]"></i> Discord Bot Webhooks & Role Mentions
+            </h2>
+            <p class="text-xs text-slate-400">Bridge Clan events and automated war alerts directly to your Discord server</p>
+          </div>
+          <span class="bg-emerald-950 text-emerald-400 font-mono text-xs px-2.5 py-1 rounded border border-emerald-500/40 font-bold flex items-center gap-1.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> BOT LINKED
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-xs">
+          <!-- Left Column: Webhook & Mention Setup -->
+          <div class="space-y-3">
+            <div>
+              <label class="text-slate-300 font-bold block mb-1">
+                Discord Webhook URL
+                <span class="text-slate-500 font-normal ml-1">(NDL BOT Channel)</span>
+              </label>
+              <input type="text" id="discordWebhookInput" value="https://discord.com/api/webhooks/1568196993493369008/6pT31sR5uAMkWBzgjqVVfaim4xOOmt0lD7z1kxodrhMvTzPQifI9drj6bVDYYV9GZc-W" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-[11px] text-slate-300 focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div class="bg-[#0b0f17] p-3 rounded border border-amber-500/30 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-amber-300 font-bold flex items-center gap-1.5 text-xs">
+                  <i class="fa-solid fa-at text-amber-400"></i> Notification Mention Tag
+                </label>
+                <span class="text-[10px] font-mono text-emerald-400 bg-[#070a0f] px-2 py-0.5 rounded border border-emerald-500/30">Role Verified</span>
+              </div>
+              <input type="text" id="discordMentionInput" value="<@&1567197063039688866>" class="w-full bg-[#070a0f] border border-amber-500/50 rounded p-2 font-mono text-amber-300 text-sm font-bold focus:outline-none focus:border-amber-400" placeholder="<@&1567197063039688866>">
+              
+              <div class="flex items-center gap-1.5 flex-wrap pt-1">
+                <span class="text-[11px] text-slate-400">Quick Select:</span>
+                <button type="button" onclick="setMentionTag('<@&1567197063039688866>')" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded text-[11px] font-mono font-bold transition">@coc (Role ID)</button>
+                <button type="button" onclick="setMentionTag('@here')" class="bg-[#121927] hover:bg-[#1a2336] text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px] font-mono transition">@here</button>
+                <button type="button" onclick="setMentionTag('@everyone')" class="bg-[#121927] hover:bg-[#1a2336] text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px] font-mono transition">@everyone</button>
+                <button type="button" onclick="setMentionTag('')" class="bg-[#121927] hover:bg-[#1a2336] text-slate-400 border border-slate-700 px-2 py-0.5 rounded text-[11px] font-mono transition">None</button>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-tight">
+                Pings Discord role <strong class="text-amber-300">@coc</strong> (<code class="text-amber-400">&lt;@&amp;1567197063039688866&gt;</code>) so all members receive real phone and sound alerts.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right Column: Automated Dispatch Triggers -->
+          <div class="space-y-2">
+            <label class="text-slate-300 font-bold block mb-1">Live Automated Telemetry Triggers</label>
+            <div class="space-y-2">
+              <label class="flex items-start gap-2.5 p-2 bg-[#090c12] rounded border border-[#161f30] cursor-pointer hover:border-slate-700">
+                <input type="checkbox" id="alertWarPhases" checked class="mt-0.5 rounded border-slate-700 text-amber-500 focus:ring-0">
+                <div>
+                  <span class="font-bold text-slate-200 block">War Phase Transitions (<span class="text-amber-400">@coc</span>)</span>
+                  <span class="text-[11px] text-slate-400">Pings when War Match is found, Preparation starts, Battle Day goes LIVE, and War concludes.</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2 bg-[#090c12] rounded border border-[#161f30] cursor-pointer hover:border-slate-700">
+                <input type="checkbox" id="alertWarAttacks" checked class="mt-0.5 rounded border-slate-700 text-amber-500 focus:ring-0">
+                <div>
+                  <span class="font-bold text-slate-200 block">War Attacks & 3-Star Triples (<span class="text-amber-400">@coc</span>)</span>
+                  <span class="text-[11px] text-slate-400">Real-time attack ticker posting stars, destruction %, and celebrating triples.</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2 bg-[#090c12] rounded border border-[#161f30] cursor-pointer hover:border-slate-700">
+                <input type="checkbox" id="alertSlackers" checked class="mt-0.5 rounded border-slate-700 text-amber-500 focus:ring-0">
+                <div>
+                  <span class="font-bold text-slate-200 block">Slacker Countdown Reminders (<span class="text-amber-400">@coc</span>)</span>
+                  <span class="text-[11px] text-slate-400">Dispatches warnings at 4 Hours and 1 Hour remaining to all members with pending attacks.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action HUD -->
+        <div class="pt-3 border-t border-[#1c2638] mt-4 flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <button onclick="saveDiscordConfig()" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-4 py-1.5 rounded flex items-center gap-1.5 shadow-md">
+              <i class="fa-solid fa-floppy-disk"></i> Save Settings
+            </button>
+            <span id="discordSaveStatus" class="text-xs text-emerald-400 font-mono hidden">✓ Saved</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="sendDiscordTestNotification()" class="coc-btn-metal text-cyan-300 hover:text-white font-bold text-xs px-3.5 py-1.5 rounded flex items-center gap-2 border border-cyan-500/40 shadow-sm">
+              <i class="fa-solid fa-paper-plane text-cyan-400"></i> Dispatch Test @coc Ping
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= TACTICAL FOOTER ================= -->
+  <footer class="bg-[#090c12] border-t border-[#161f2e] py-3 text-center text-xs text-slate-500 font-tactical">
+    <div class="max-w-[1440px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <img src="logo.png" alt="NDL" class="w-5 h-5 rounded object-cover" onerror="this.onerror=null; this.src='logo.jpg';">
+        <span class="font-clash font-bold text-amber-400">NAADAN LEGACY ESPORTS</span>
+        <span>• Clan Tag: <strong class="font-mono text-slate-300">#2CVLCU8L9</strong></span>
+      </div>
+      <div>
+        <span>Clash of Clans & Supercell are trademarks of Supercell Oy. Fan Content Policy Compliant.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODAL: DRAFT CLAN MAIL ================= -->
+  <div id="draftMailModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-3">
+    <div class="coc-frame rounded-lg max-w-lg w-full p-4 border border-amber-500/50 shadow-2xl relative">
+      <div class="rivet-tl"></div><div class="rivet-tr"></div>
+      
+      <div class="flex items-center justify-between pb-2.5 border-b border-[#1c2638]">
+        <h3 class="font-clash font-black text-base text-white flex items-center gap-2">
+          <i class="fa-solid fa-scroll text-amber-400"></i> Dispatch Clan Mail Notice
+        </h3>
+        <button onclick="closeModal('draftMailModal')" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <div class="mt-3 space-y-2.5 text-xs">
+        <div>
+          <label class="text-slate-300 font-bold block mb-1">Target Audience</label>
+          <select id="mailAudienceSelect" onchange="onAudienceChange(this.value)" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 text-slate-200">
+            <option value="Active 15v15 War Roster">Active 15v15 War Roster</option>
+            <option id="mailAudienceAllOption" value="all">All Clan Members (22)</option>
+            <option value="Low Ratio Donators (<0.5 ratio)">Low Ratio Donators (&lt;0.5 ratio)</option>
+            <option value="Co-Leaders & Elders Only">Co-Leaders & Elders Only</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-slate-300 font-bold block mb-1">Tactical Presets</label>
+          <div class="flex gap-1.5 flex-wrap">
+            <button type="button" onclick="setTemplate('prep')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">War Prep Directives</button>
+            <button type="button" onclick="setTemplate('cc')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Fill Defensive CCs</button>
+            <button type="button" onclick="setTemplate('ratio')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Donation Warning</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-300 font-bold block mb-1">Clash Mail Body (Max 250 Chars in-game)</label>
+          <textarea id="mailTextContent" rows="4" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-xs text-slate-200 focus:outline-none focus:border-amber-500">NDL DIRECTIVE: War Prep is active vs 'solo player'! Ensure your War Layout is active and request defensive troops. Check the War Room for base assignments!</textarea>
+        </div>
+
+        <div>
+          <label class="text-slate-300 font-bold flex items-center justify-between mb-1">
+            <span>Discord Notification Tag</span>
+            <span class="text-emerald-400 font-mono text-[10px]">Pings Channel</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <input type="text" id="mailRoleMention" value="<@&1567197063039688866>" class="w-48 bg-[#090c12] border border-amber-500/50 rounded p-1.5 font-mono text-amber-300 text-xs font-bold focus:outline-none focus:border-amber-400">
+            <span class="text-slate-400 text-[11px]">Pings @coc role (ID: 1567197063039688866)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-2.5 border-t border-[#1c2638]">
+        <div class="flex items-center justify-between">
+          <button onclick="copyMailBody()" class="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+            <i class="fa-regular fa-copy"></i> Copy Body
+          </button>
+          <div class="flex gap-2">
+            <button onclick="closeModal('draftMailModal')" class="coc-btn-metal text-slate-300 text-xs px-3 py-1.5 rounded">Cancel</button>
+            <button onclick="broadcastClanNotice()" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-4 py-1.5 rounded shadow">
+              Broadcast
+            </button>
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 text-center">
+          <strong>How it works:</strong> Broadcast posts directly to your Discord webhook with <span class="text-amber-400 font-mono">@coc</span> & copies the text to clipboard so you can paste it into in-game Clan Mail.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: SETTINGS ================= -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-3">
+    <div class="coc-frame rounded-lg max-w-sm w-full p-4 border border-[#222e44] shadow-2xl relative">
+      <div class="rivet-tl"></div><div class="rivet-tr"></div>
+      
+      <div class="flex items-center justify-between pb-2.5 border-b border-[#1c2638]">
+        <h3 class="font-clash font-black text-base text-white">Manager Settings</h3>
+        <button onclick="closeModal('settingsModal')" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <div class="mt-3 space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Live Backend / Tunnel URL (For Netlify)</label>
+          <input type="text" id="settingsBackendUrl" placeholder="https://ndl-clash-live.loca.lt" class="w-full bg-[#090c12] border border-cyan-500/50 rounded p-1.5 font-mono text-cyan-300 font-bold focus:outline-none focus:border-cyan-400">
+          <p class="text-[10px] text-slate-400 mt-1">Enables real-time Supercell auto-sync on Netlify. Default: <span class="text-cyan-400 font-mono">https://ndl-clash-live.loca.lt</span></p>
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">Connected Clan Tag</label>
+          <input type="text" id="settingsClanTag" value="#2CVLCU8L9" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-1.5 font-mono text-amber-400 font-bold">
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1 flex items-center justify-between">
+            <span>Machine Public IP</span>
+            <button onclick="copyIpAddress()" class="text-amber-400 hover:text-amber-300 font-bold text-[10px]">Copy IP</button>
+          </label>
+          <input type="text" id="settingsPublicIp" value="103.175.2.152" readonly class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-1.5 font-mono text-emerald-400 font-bold">
+          <p class="text-[10px] text-slate-500 mt-1">Whitelist this IP on <a href="https://developer.clashofclans.com" target="_blank" class="text-amber-400 underline">developer.clashofclans.com</a></p>
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">Supercell API Token</label>
+          <textarea id="settingsApiToken" rows="2" placeholder="Paste new Supercell API Token here..." class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-1.5 font-mono text-slate-300 text-[10px] focus:outline-none focus:border-amber-400"></textarea>
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">Live Polling Rate</label>
+          <select id="settingsPollingSelect" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-1.5 text-slate-200">
+            <option value="10000">Every 10 Seconds (Ultra-Fast Live)</option>
+            <option value="30000">Every 30 Seconds</option>
+            <option value="60000">Every 1 Minute</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 pt-2.5 border-t border-[#1c2638] flex justify-end gap-2">
+        <button onclick="closeModal('settingsModal')" class="coc-btn-metal text-slate-300 text-xs px-3 py-1 rounded">Close</button>
+        <button onclick="saveApiSettings()" class="coc-btn-gold text-[#111724] font-tactical font-black text-xs uppercase px-3 py-1 rounded">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT CONTROLLERS ================= -->
+  <script>
+    // Authentic 21-Member Roster Dataset for Clan N D L (#2CVLCU8L9)
+    let clanMembers = [
+  {
+    "name": "leetsu",
+    "tag": "#90Y2JYPUV",
+    "role": "Co-Leader",
+    "th": 17,
+    "trophies": 233,
+    "don": 171,
+    "rec": 94,
+    "ratio": 1.82,
+    "war": "IN"
+  },
+  {
+    "name": "MAD",
+    "tag": "#YLLLUJ2U0",
+    "role": "Elder",
+    "th": 15,
+    "trophies": 0,
+    "don": 232,
+    "rec": 0,
+    "ratio": 99,
+    "war": "IN"
+  },
+  {
+    "name": "AK",
+    "tag": "#LG2JQCR2P",
+    "role": "Co-Leader",
+    "th": 15,
+    "trophies": 0,
+    "don": 476,
+    "rec": 313,
+    "ratio": 1.52,
+    "war": "IN"
+  },
+  {
+    "name": "F3ÀR・rohi",
+    "tag": "#2U8Q2QU88",
+    "role": "Elder",
+    "th": 14,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "PEACE SAMA",
+    "tag": "#9LV28JURU",
+    "role": "Member",
+    "th": 13,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "AEGON XD",
+    "tag": "#LGY2LGLR9",
+    "role": "Elder",
+    "th": 12,
+    "trophies": 278,
+    "don": 47,
+    "rec": 156,
+    "ratio": 0.3,
+    "war": "IN"
+  },
+  {
+    "name": "ʙʟᴀᴄᴋ 777",
+    "tag": "#Q9R809GQ2",
+    "role": "Elder",
+    "th": 12,
+    "trophies": 0,
+    "don": 166,
+    "rec": 125,
+    "ratio": 1.33,
+    "war": "IN"
+  },
+  {
+    "name": "Eric Eagle",
+    "tag": "#2G008RYV2",
+    "role": "Co-Leader",
+    "th": 12,
+    "trophies": 388,
+    "don": 118,
+    "rec": 121,
+    "ratio": 0.98,
+    "war": "IN"
+  },
+  {
+    "name": "DR_METTALIOED",
+    "tag": "#9JQG8RQC9",
+    "role": "Elder",
+    "th": 12,
+    "trophies": 280,
+    "don": 0,
+    "rec": 83,
+    "ratio": 0,
+    "war": "IN"
+  },
+  {
+    "name": "D@R€ TO REVENG€",
+    "tag": "#JGLC9JC9",
+    "role": "Elder",
+    "th": 11,
+    "trophies": 0,
+    "don": 13,
+    "rec": 137,
+    "ratio": 0.09,
+    "war": "IN"
+  },
+  {
+    "name": "D X G",
+    "tag": "#RYVVLCUUG",
+    "role": "Co-Leader",
+    "th": 7,
+    "trophies": 29,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "zenin",
+    "tag": "#QJ2UJ8LU2",
+    "role": "Elder",
+    "th": 13,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "CaptainCookies™",
+    "tag": "#PGUGYCCGP",
+    "role": "Elder",
+    "th": 16,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "urumb_SuLu",
+    "tag": "#R8LV8J8QU",
+    "role": "Elder",
+    "th": 7,
+    "trophies": 0,
+    "don": 0,
+    "rec": 15,
+    "ratio": 0,
+    "war": "IN"
+  },
+  {
+    "name": "VENUS",
+    "tag": "#R9LRGV0QU",
+    "role": "Elder",
+    "th": 5,
+    "trophies": 0,
+    "don": 0,
+    "rec": 20,
+    "ratio": 0,
+    "war": "IN"
+  },
+  {
+    "name": "Draiven",
+    "tag": "#R9C0YLVLR",
+    "role": "Elder",
+    "th": 4,
+    "trophies": 0,
+    "don": 1,
+    "rec": 55,
+    "ratio": 0.02,
+    "war": "IN"
+  },
+  {
+    "name": "devil",
+    "tag": "#98QVLL2U0",
+    "role": "Elder",
+    "th": 12,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "么RAVEN",
+    "tag": "#QYRJCPVPJ",
+    "role": "Elder",
+    "th": 12,
+    "trophies": 0,
+    "don": 1,
+    "rec": 0,
+    "ratio": 99,
+    "war": "IN"
+  },
+  {
+    "name": "Son of Landings",
+    "tag": "#PU9YRL0YG",
+    "role": "Leader",
+    "th": 10,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  },
+  {
+    "name": "SRBTrollersYT",
+    "tag": "#R282P89G9",
+    "role": "Elder",
+    "th": 8,
+    "trophies": 0,
+    "don": 16,
+    "rec": 45,
+    "ratio": 0.36,
+    "war": "IN"
+  },
+  {
+    "name": "nandu",
+    "tag": "#99JUC9QCQ",
+    "role": "Elder",
+    "th": 13,
+    "trophies": 0,
+    "don": 0,
+    "rec": 77,
+    "ratio": 0,
+    "war": "IN"
+  },
+  {
+    "name": "oliver",
+    "tag": "#R20V8JV9C",
+    "role": "Elder",
+    "th": 6,
+    "trophies": 0,
+    "don": 0,
+    "rec": 0,
+    "ratio": 1,
+    "war": "IN"
+  }
+];
+
+    // Live War State & Dynamic Countdown Engine
+    let liveWar = {
+  "state": "inWar",
+  "teamSize": 15,
+  "attacksPerMember": 2,
+  "battleModifier": "none",
+  "preparationStartTime": "20261106T061041.000Z",
+  "startTime": "20261107T051041.000Z",
+  "endTime": "20261108T051041.000Z",
+  "clan": {
+    "tag": "#2CVLCU8L9",
+    "name": "N D L",
+    "badgeUrls": {
+      "small": "https://api-assets.clashofclans.com/badges/70/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png"
+    },
+    "clanLevel": 1,
+    "attacks": 5,
+    "stars": 12,
+    "destructionPercentage": 30.666666,
+    "members": [
+      {
+        "tag": "#QJ2UJ8LU2",
+        "name": "zenin",
+        "townhallLevel": 13,
+        "mapPosition": 4,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#YLLLUJ2U0",
+        "name": "MAD",
+        "townhallLevel": 15,
+        "mapPosition": 3,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#90Y2JYPUV",
+        "name": "leetsu",
+        "townhallLevel": 17,
+        "mapPosition": 1,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#2G008RYV2",
+        "name": "Eric Eagle",
+        "townhallLevel": 12,
+        "mapPosition": 6,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R8LV8J8QU",
+        "name": "urumb_SuLu",
+        "townhallLevel": 7,
+        "mapPosition": 12,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R9LRGV0QU",
+        "name": "VENUS",
+        "townhallLevel": 6,
+        "mapPosition": 14,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#Q9R809GQ2",
+        "name": "ʙʟᴀᴄᴋ 777",
+        "townhallLevel": 12,
+        "mapPosition": 5,
+        "attacks": [
+          {
+            "attackerTag": "#Q9R809GQ2",
+            "defenderTag": "#R8V2QG299",
+            "stars": 2,
+            "destructionPercentage": 88,
+            "order": 2,
+            "duration": 124
+          },
+          {
+            "attackerTag": "#Q9R809GQ2",
+            "defenderTag": "#GR9992U0U",
+            "stars": 3,
+            "destructionPercentage": 100,
+            "order": 3,
+            "duration": 129
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R9C0YLVLR",
+        "name": "Draiven",
+        "townhallLevel": 4,
+        "mapPosition": 15,
+        "attacks": [
+          {
+            "attackerTag": "#R9C0YLVLR",
+            "defenderTag": "#R2RRVCLP8",
+            "stars": 2,
+            "destructionPercentage": 86,
+            "order": 4,
+            "duration": 180
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#QYRJCPVPJ",
+        "name": "么RAVEN",
+        "townhallLevel": 12,
+        "mapPosition": 9,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#RYVVLCUUG",
+        "name": "D X G",
+        "townhallLevel": 7,
+        "mapPosition": 13,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#PU9YRL0YG",
+        "name": "Son of Landings",
+        "townhallLevel": 11,
+        "mapPosition": 11,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#LG2JQCR2P",
+        "name": "AK",
+        "townhallLevel": 15,
+        "mapPosition": 2,
+        "attacks": [
+          {
+            "attackerTag": "#LG2JQCR2P",
+            "defenderTag": "#GV2P0VQLV",
+            "stars": 2,
+            "destructionPercentage": 86,
+            "order": 5,
+            "duration": 108
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#9JQG8RQC9",
+        "name": "DR_METTALIOED",
+        "townhallLevel": 12,
+        "mapPosition": 7,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#LGY2LGLR9",
+        "name": "AEGON XD",
+        "townhallLevel": 12,
+        "mapPosition": 8,
+        "attacks": [
+          {
+            "attackerTag": "#LGY2LGLR9",
+            "defenderTag": "#GGCUVRGLR",
+            "stars": 3,
+            "destructionPercentage": 100,
+            "order": 1,
+            "duration": 118
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#JGLC9JC9",
+        "name": "D@R€ TO REVENG€",
+        "townhallLevel": 11,
+        "mapPosition": 10,
+        "opponentAttacks": 0
+      }
+    ]
+  },
+  "opponent": {
+    "tag": "#2CJYJ0JG2",
+    "name": "solo player",
+    "badgeUrls": {
+      "small": "https://api-assets.clashofclans.com/badges/70/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png"
+    },
+    "clanLevel": 5,
+    "attacks": 0,
+    "stars": 0,
+    "destructionPercentage": 0,
+    "members": [
+      {
+        "tag": "#GGRVCQL2P",
+        "name": "salsalako",
+        "townhallLevel": 9,
+        "mapPosition": 13,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GR9992U0U",
+        "name": "ayaw kol baPako",
+        "townhallLevel": 12,
+        "mapPosition": 7,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#Q9R809GQ2",
+          "defenderTag": "#GR9992U0U",
+          "stars": 3,
+          "destructionPercentage": 100,
+          "order": 3,
+          "duration": 129
+        }
+      },
+      {
+        "tag": "#GGCUVRGLR",
+        "name": "jacolero2",
+        "townhallLevel": 12,
+        "mapPosition": 8,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#LGY2LGLR9",
+          "defenderTag": "#GGCUVRGLR",
+          "stars": 3,
+          "destructionPercentage": 100,
+          "order": 1,
+          "duration": 118
+        }
+      },
+      {
+        "tag": "#GJUCP8URJ",
+        "name": "paralulo",
+        "townhallLevel": 15,
+        "mapPosition": 3,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GVQVVCCYR",
+        "name": "mark",
+        "townhallLevel": 15,
+        "mapPosition": 2,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GVJQ9R0YL",
+        "name": "utugan",
+        "townhallLevel": 13,
+        "mapPosition": 4,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R0929LR29",
+        "name": "paraluci",
+        "townhallLevel": 11,
+        "mapPosition": 10,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R0CYQ9JVV",
+        "name": "giatay ka",
+        "townhallLevel": 10,
+        "mapPosition": 12,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R22G8QYQQ",
+        "name": "paraluci 2",
+        "townhallLevel": 12,
+        "mapPosition": 9,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R2RRVCLP8",
+        "name": "reymark",
+        "townhallLevel": 8,
+        "mapPosition": 15,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#R9C0YLVLR",
+          "defenderTag": "#R2RRVCLP8",
+          "stars": 2,
+          "destructionPercentage": 86,
+          "order": 4,
+          "duration": 180
+        }
+      },
+      {
+        "tag": "#R9YC2G00J",
+        "name": "boss",
+        "townhallLevel": 13,
+        "mapPosition": 6,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R99UJP2P0",
+        "name": "sa puso ng maha",
+        "townhallLevel": 7,
+        "mapPosition": 14,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R8V2QG299",
+        "name": "butoon",
+        "townhallLevel": 13,
+        "mapPosition": 5,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#Q9R809GQ2",
+          "defenderTag": "#R8V2QG299",
+          "stars": 2,
+          "destructionPercentage": 88,
+          "order": 2,
+          "duration": 124
+        }
+      },
+      {
+        "tag": "#GV2P0VQLV",
+        "name": "kulotske",
+        "townhallLevel": 15,
+        "mapPosition": 1,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#LG2JQCR2P",
+          "defenderTag": "#GV2P0VQLV",
+          "stars": 2,
+          "destructionPercentage": 86,
+          "order": 5,
+          "duration": 108
+        }
+      },
+      {
+        "tag": "#GUCQL8UGJ",
+        "name": "bossrey12",
+        "townhallLevel": 11,
+        "mapPosition": 11,
+        "opponentAttacks": 0
+      }
+    ]
+  }
+};
+
+    // Parse Supercell API format: YYYYMMDDTHHMMSS.000Z
+    function parseCocDate(str) {
+      if (!str) return null;
+      const match = str.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+      if (match) {
+        const [_, y, m, d, hh, mm, ss] = match;
+        return new Date(Date.UTC(+y, +m - 1, +d, +hh, +mm, +ss));
+      }
+      return new Date(str);
+    }
+
+    // Format milliseconds into dynamic countdown string: Xh Ym Zs
+    function formatCountdown(ms) {
+      if (ms <= 0) return "00h 00m 00s";
+      const totalSeconds = Math.floor(ms / 1000);
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      return `${h}h ${(m < 10 ? '0' : '')}${m}m ${(s < 10 ? '0' : '')}${s}s`;
+    }
+
+    // Live ticking countdown ticker (Runs every 1000ms)
+    function updateWarCountdown() {
+      if (!liveWar) return;
+
+      const headerTimer = document.getElementById("headerWarCountdown");
+      const scoreboardTimer = document.getElementById("scoreboardCountdownTimer");
+      const scoreboardLabel = document.getElementById("scoreboardCountdownLabel");
+      const scoreboardBadge = document.getElementById("scoreboardWarStateBadge");
+
+      const now = Date.now();
+      const startTime = parseCocDate(liveWar.startTime);
+      const endTime = parseCocDate(liveWar.endTime);
+
+      if (!startTime || !endTime) return;
+
+      if (now < startTime.getTime()) {
+        // Preparation Phase
+        liveWar.state = 'preparation';
+        const diff = startTime.getTime() - now;
+        const timeStr = formatCountdown(diff);
+        if (headerTimer) headerTimer.innerText = `PREP DAY: ${timeStr} REMAINING`;
+        if (scoreboardTimer) scoreboardTimer.innerHTML = `<i class="fa-regular fa-clock mr-1 text-amber-400"></i>${timeStr}`;
+        if (scoreboardLabel) scoreboardLabel.innerText = "BATTLE PHASE UNLOCKS IN:";
+        if (scoreboardBadge) {
+          scoreboardBadge.className = "bg-amber-500/15 text-amber-300 border border-amber-500/40 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
+          scoreboardBadge.innerText = "PREPARATION DAY";
+        }
+      } else if (now >= startTime.getTime() && now < endTime.getTime()) {
+        // Battle Phase LIVE
+        liveWar.state = 'inWar';
+        const diff = endTime.getTime() - now;
+        const timeStr = formatCountdown(diff);
+        if (headerTimer) headerTimer.innerText = `BATTLE DAY: ${timeStr} REMAINING`;
+        if (scoreboardTimer) scoreboardTimer.innerHTML = `<i class="fa-solid fa-hourglass-half mr-1 text-red-400"></i>${timeStr}`;
+        if (scoreboardLabel) scoreboardLabel.innerText = "WAR CLOSES IN:";
+        if (scoreboardBadge) {
+          scoreboardBadge.className = "bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase animate-pulse";
+          scoreboardBadge.innerText = "BATTLE DAY LIVE";
+        }
+      } else {
+        // Concluded
+        liveWar.state = 'warEnded';
+        if (headerTimer) headerTimer.innerText = `WAR CONCLUDED`;
+        if (scoreboardTimer) scoreboardTimer.innerHTML = `<i class="fa-solid fa-trophy mr-1 text-amber-400"></i>FINAL RESULTS`;
+        if (scoreboardLabel) scoreboardLabel.innerText = "STATUS:";
+        if (scoreboardBadge) {
+          scoreboardBadge.className = "bg-slate-700/40 text-slate-300 border border-slate-600 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
+          scoreboardBadge.innerText = "WAR CONCLUDED";
+        }
+      }
+    }
+
+    // Update war scoreboard numbers and tug-of-war balance bar
+    function updateWarScoreboardUI(war) {
+      if (!war) return;
+
+      const totalPossibleAttacks = (war.teamSize || 15) * (war.attacksPerMember || 2);
+      const ndlClan = war.clan || {};
+      const oppClan = war.opponent || {};
+
+      // Header Matchup
+      const headerMatchup = document.getElementById("headerWarMatchup");
+      if (headerMatchup) headerMatchup.innerText = `${ndlClan.name || 'NDL'} vs ${oppClan.name || 'solo player'}`;
+
+      // Title
+      const warTitle = document.getElementById("scoreboardWarTitle");
+      if (warTitle) warTitle.innerText = `ACTIVE WAR: ${war.teamSize || 15} VS ${war.teamSize || 15}`;
+
+      // NDL side
+      const ndlAtk = document.getElementById("ndlAttacksCount");
+      if (ndlAtk) ndlAtk.innerText = `${ndlClan.attacks || 0} / ${totalPossibleAttacks} Attacks`;
+
+      const ndlStars = document.getElementById("ndlStarsCount");
+      if (ndlStars) ndlStars.innerText = (ndlClan.stars || 0).toString();
+
+      const ndlDmg = document.getElementById("ndlDestructionPct");
+      if (ndlDmg) ndlDmg.innerText = `${(ndlClan.destructionPercentage || 0).toFixed(1)}% DMG`;
+
+      // Opponent side
+      const oppName = document.getElementById("oppClanName");
+      if (oppName) oppName.innerText = oppClan.name || 'solo player';
+
+      const oppAtk = document.getElementById("oppAttacksCount");
+      if (oppAtk) oppAtk.innerText = `${oppClan.attacks || 0} / ${totalPossibleAttacks} Attacks`;
+
+      const oppStars = document.getElementById("oppStarsCount");
+      if (oppStars) oppStars.innerText = (oppClan.stars || 0).toString();
+
+      const oppDmg = document.getElementById("oppDestructionPct");
+      if (oppDmg) oppDmg.innerText = `${(oppClan.destructionPercentage || 0).toFixed(1)}% DMG`;
+
+      const oppLvl = document.getElementById("oppClanLevelBadge");
+      if (oppLvl) oppLvl.innerText = `LVL ${oppClan.clanLevel || 1}`;
+
+      // Tug of war bar
+      const tugNdl = document.getElementById("warTugBarNdl");
+      const tugOpp = document.getElementById("warTugBarOpp");
+      const ndlPct = ndlClan.destructionPercentage || 0;
+      const oppPct = oppClan.destructionPercentage || 0;
+      if (tugNdl && tugOpp) {
+        if (ndlPct === 0 && oppPct === 0) {
+          tugNdl.style.width = '50%';
+          tugOpp.style.width = '50%';
+        } else {
+          const total = ndlPct + oppPct;
+          const ndlShare = ((ndlPct / total) * 100).toFixed(1);
+          tugNdl.style.width = `${ndlShare}%`;
+          tugOpp.style.width = `${(100 - ndlShare).toFixed(1)}%`;
+        }
+      }
+    }
+
+    function getThBadge(th) {
+      if (th >= 17) return "th-badge-17";
+      if (th === 16) return "th-badge-16";
+      if (th === 15) return "th-badge-15";
+      if (th === 14) return "th-badge-14";
+      if (th === 13) return "th-badge-13";
+      if (th === 12) return "th-badge-12";
+      if (th === 11) return "th-badge-11";
+      if (th === 10) return "th-badge-10";
+      return "th-badge-low";
+    }
+
+    // Dynamic War Callouts Matrix Rendering (15v15 Matchup)
+    function renderWarCalloutsTable(war) {
+      const tbody = document.getElementById("warCalloutsTableBody");
+      if (!tbody) return;
+      if (!war || !war.opponent || !war.opponent.members || !war.opponent.members.length) return;
+
+      const oppMembers = [...war.opponent.members].sort((a,b) => a.mapPosition - b.mapPosition);
+      const clanMembersMap = {};
+      if (war.clan && war.clan.members) {
+        war.clan.members.forEach(m => {
+          clanMembersMap[m.mapPosition] = m;
+        });
+      }
+
+      // Authentic Defensive CC preset compositions
+      const ccStatusPresets = [
+        "1x Super Minion, 2x Ice Golem",
+        "Electro Titan + Rocket Loons",
+        "⚠️ CC Empty (Needs Fill)",
+        "2x Super Dragon",
+        "1x Hound, 3x Balloon",
+        "Hound + Balloon",
+        "Super Minions + Headhunter",
+        "2x Witch, 3x Archer",
+        "1x Ice Golem, 1x Witch",
+        "1x Electro Dragon",
+        "2x Super Valkyrie",
+        "1x Baby Dragon, 2x Valk",
+        "1x Dragon, 1x Loon",
+        "1x Baby Dragon, 3x Wizard",
+        "1x Valkyrie, 3x Archer"
+      ];
+
+      tbody.innerHTML = "";
+      oppMembers.forEach(opp => {
+        const pos = opp.mapPosition;
+        const posStr = pos < 10 ? `0${pos}` : `${pos}`;
+        const clanMate = clanMembersMap[pos];
+        const assignedName = clanMate ? clanMate.name : "Unassigned";
+        const thBadge = getThBadge(opp.townhallLevel);
+        const ccDesc = ccStatusPresets[pos - 1] || "1x Dragon, 2x Loon";
+        const isNeedsFill = ccDesc.includes("Empty");
+        const isLocked = pos <= 2;
+        const isClaimed = !isLocked && (pos % 2 === 1 || pos === 4);
+        const bestAtk = opp.bestOpponentAttack;
+
+        let stateClass = "bg-slate-800 text-slate-300 border border-slate-600";
+        let stateText = "OPEN";
+        let btnText = "Claim Base";
+        let btnAction = `claimBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
+
+        if (bestAtk && bestAtk.stars === 3) {
+          stateClass = "bg-emerald-950 text-emerald-400 border border-emerald-500/60 font-black";
+          stateText = "3★ DESTROYED";
+          btnText = "Cleared";
+          btnAction = `showToast('Base #${posStr} was 100% wiped with 3 Stars!')`;
+        } else if (bestAtk && bestAtk.stars === 2) {
+          stateClass = "bg-amber-950 text-amber-300 border border-amber-500/60 font-black";
+          stateText = `2★ (${bestAtk.destructionPercentage}% DMG)`;
+          btnText = "Clean Up";
+          btnAction = `claimBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
+        } else if (bestAtk && bestAtk.stars === 1) {
+          stateClass = "bg-red-950 text-red-300 border border-red-500/60 font-black";
+          stateText = `1★ (${bestAtk.destructionPercentage}% DMG)`;
+          btnText = "Clean Up";
+          btnAction = `claimBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
+        } else if (isLocked) {
+          stateClass = "bg-emerald-950 text-emerald-400 border border-emerald-500/50";
+          stateText = "LOCKED";
+          btnText = "Reassign";
+          btnAction = `reassignBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
+        } else if (isClaimed) {
+          stateClass = "bg-amber-950 text-amber-300 border border-amber-500/50";
+          stateText = "CLAIMED";
+          btnText = "Reassign";
+          btnAction = `reassignBase(${pos}, '${opp.name.replace(/'/g, "\\'")}')`;
+        }
+
+        const tr = document.createElement("tr");
+        tr.id = `base-row-${pos}`;
+        tr.className = "hover:bg-[#121926] transition";
+        tr.innerHTML = `
+          <td class="py-2 px-2.5 font-battle text-base font-bold text-amber-400">#${posStr}</td>
+          <td class="py-2 px-2.5 font-bold text-white">${opp.name}</td>
+          <td class="py-2 px-2.5"><span class="${thBadge} font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH ${opp.townhallLevel}</span></td>
+          <td class="py-2 px-2.5 font-bold text-cyan-300">${assignedName}</td>
+          <td class="py-2 px-2.5"><span class="callout-state ${stateClass} px-1.5 py-0.2 rounded font-mono font-bold text-[10px]">${stateText}</span></td>
+          <td class="py-2 px-2.5 ${isNeedsFill ? 'text-amber-400 font-bold' : 'text-slate-300 font-mono'} text-[11px]">${ccDesc}</td>
+          <td class="py-2 px-2.5 text-right">
+            <button onclick="${btnAction}" class="text-amber-400 hover:text-amber-300 font-bold">${btnText}</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Callout interactive commands
+    function claimBase(baseNum, targetName) {
+      const row = document.getElementById(`base-row-${baseNum}`);
+      if (row) {
+        const stateEl = row.querySelector('.callout-state');
+        if (stateEl) {
+          stateEl.className = 'callout-state bg-amber-950 text-amber-300 border border-amber-500/50 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]';
+          stateEl.innerText = 'CLAIMED';
+        }
+        const cmdBtn = row.querySelector('button');
+        if (cmdBtn) {
+          cmdBtn.setAttribute('onclick', `reassignBase(${baseNum}, '${targetName.replace(/'/g, "\\'")}')`);
+          cmdBtn.innerText = 'Reassign';
+        }
+      }
+      showToast(`🎯 Claimed Opponent Base #${baseNum < 10 ? '0' + baseNum : baseNum} (${targetName})!`);
+    }
+
+    function reassignBase(baseNum, targetName) {
+      const row = document.getElementById(`base-row-${baseNum}`);
+      if (row) {
+        const stateEl = row.querySelector('.callout-state');
+        if (stateEl) {
+          stateEl.className = 'callout-state bg-slate-800 text-slate-300 border border-slate-600 px-1.5 py-0.2 rounded font-mono font-bold text-[10px]';
+          stateEl.innerText = 'OPEN';
+        }
+        const cmdBtn = row.querySelector('button');
+        if (cmdBtn) {
+          cmdBtn.setAttribute('onclick', `claimBase(${baseNum}, '${targetName.replace(/'/g, "\\'")}')`);
+          cmdBtn.innerText = 'Claim Base';
+        }
+      }
+      showToast(`🔄 Base #${baseNum < 10 ? '0' + baseNum : baseNum} reopened for reassignment.`);
+    }
+
+    // Populate Dynamic TH Filter Dropdown
+    function populateThFilter(list) {
+      const thSelect = document.getElementById("thFilterSelect");
+      if (!thSelect) return;
+      const currentSelected = thSelect.value;
+      const ths = Array.from(new Set(list.map(m => m.th || 12))).sort((a,b) => b - a);
+      thSelect.innerHTML = '<option value="ALL">All Town Halls</option>';
+      ths.forEach(th => {
+        const opt = document.createElement('option');
+        opt.value = th.toString();
+        opt.innerText = `TH ${th}`;
+        if (opt.value === currentSelected) opt.selected = true;
+        thSelect.appendChild(opt);
+      });
+    }
+
+    // Populate Roster Table with authentic styling
+    function renderRoster(list) {
+      const tbody = document.getElementById("rosterTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      
+      list.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-[#121926] transition";
+
+        const thBadge = getThBadge(m.th);
+        const ratioColor = m.ratio >= 1.0 ? "text-emerald-400" : (m.ratio >= 0.5 ? "text-slate-300" : "text-amber-400");
+
+        tr.innerHTML = `
+          <td class="py-2 px-2.5">
+            <div class="font-bold text-white">${m.name}</div>
+            <div class="text-[10px] font-mono text-slate-500">${m.tag}</div>
+          </td>
+          <td class="py-2 px-2.5 text-slate-300 font-bold">${m.role}</td>
+          <td class="py-2 px-2.5">
+            <span class="${thBadge} font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">TH ${m.th}</span>
+          </td>
+          <td class="py-2 px-2.5 font-mono text-slate-300 font-bold">${(m.trophies || 0).toLocaleString()}</td>
+          <td class="py-2 px-2.5 font-mono text-emerald-400 font-bold">+${m.don || 0}</td>
+          <td class="py-2 px-2.5 font-mono text-slate-400">${m.rec || 0}</td>
+          <td class="py-2 px-2.5 font-mono font-bold ${ratioColor}">${m.ratio}</td>
+          <td class="py-2 px-2.5">
+            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${m.war === 'IN' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/40' : 'bg-[#151c28] text-slate-400'}">
+              ${m.war || 'IN'}
+            </span>
+          </td>
+          <td class="py-2 px-2.5 text-right">
+            <button onclick="showToast('Inspecting performance metrics for ${m.name}')" class="text-amber-400 hover:text-amber-300 font-bold text-xs">Profile</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Filter Roster
+    function filterRoster() {
+      const search = (document.getElementById("rosterSearchInput")?.value || "").toLowerCase();
+      const thVal = document.getElementById("thFilterSelect")?.value || "ALL";
+
+      const filtered = clanMembers.filter(m => {
+        const matchesQuery = (m.name || '').toLowerCase().includes(search) || (m.tag || '').toLowerCase().includes(search);
+        const matchesTh = (thVal === "ALL") || (m.th.toString() === thVal);
+        return matchesQuery && matchesTh;
+      });
+
+      renderRoster(filtered);
+    }
+
+    
+    // Dynamic Roster UI Binder
+    function updateAllRosterUI(members) {
+      if (!members || !members.length) return;
+      const count = members.length;
+      const slots = Math.max(0, 50 - count);
+
+      // 1. Tab Badge
+      const tabBadge = document.getElementById("tabRosterBadge");
+      if (tabBadge) tabBadge.innerText = `${count}/50`;
+
+      // 2. Command Deck Cards
+      const deckCount = document.getElementById("deckRosterCount");
+      if (deckCount) deckCount.innerText = count.toString();
+      const deckSlots = document.getElementById("deckSlotsCount");
+      if (deckSlots) deckSlots.innerText = `${slots} SLOTS AVAILABLE`;
+
+      // 3. Tab 3 Subtitle
+      const sub = document.getElementById("rosterSubtitle");
+      if (sub) sub.innerText = `${count} Members Recorded • Supercell API Realtime Roster`;
+
+      // 4. Clan Mail Modal Option
+      const mailOpt = document.getElementById("mailAudienceAllOption");
+      if (mailOpt) mailOpt.innerText = `All Clan Members (${count})`;
+
+      // 5. Render Roster Table
+      renderRoster(members);
+
+      // 6. TH Filter
+      populateThFilter(members);
+
+      // 7. Top Donators
+      renderTopDonators(members);
+
+      // 8. Clan Health Stats
+      renderClanHealthStats(members);
+    }
+
+    // Dynamic Command Deck Top Donators
+    function renderTopDonators(members) {
+      const container = document.getElementById("topDonatorsList");
+      if (!container || !members) return;
+
+      const sorted = [...members].sort((a,b) => (b.don || 0) - (a.don || 0)).slice(0, 5);
+      container.innerHTML = "";
+
+      const rankColors = ["text-amber-400", "text-slate-300", "text-amber-600", "text-slate-400", "text-slate-400"];
+      const maxDon = Math.max(1, sorted[0]?.don || 1);
+
+      sorted.forEach((m, idx) => {
+        const thBadge = getThBadge(m.th);
+        const barPct = Math.min(100, Math.round(((m.don || 0) / maxDon) * 100));
+        const row = document.createElement("div");
+        row.className = `flex items-center justify-between py-1.5 px-2 ${idx % 2 === 0 ? 'bg-[#0a0d14]/70' : 'bg-[#0f1420]/70'} hover:bg-[#141b27] rounded border border-[#161f30] text-xs`;
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="font-battle font-bold ${rankColors[idx] || 'text-slate-400'} text-base w-4">#${idx + 1}</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-white">${m.name}</span>
+              <span class="${thBadge} font-mono text-[10px] font-bold px-1 rounded">TH${m.th}</span>
+              ${m.role === 'Leader' ? '<span class="bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[9px] font-mono px-1 rounded">LEADER</span>' : ''}
+            </div>
+            <span class="font-mono text-[10px] text-slate-500">${m.tag}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-16 bg-[#162030] h-1.5 rounded-full overflow-hidden hidden sm:block">
+              <div class="bg-emerald-400 h-full" style="width: ${barPct}%"></div>
+            </div>
+            <div class="text-right font-mono">
+              <span class="text-emerald-400 font-bold">+${m.don || 0}</span>
+              <span class="text-slate-500 text-[10px] ml-1">/ ${m.rec || 0}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      const healthyCount = members.filter(m => (m.ratio || 0) >= 1.0).length;
+      const healthyEl = document.getElementById("healthyDonatorsCount");
+      if (healthyEl) healthyEl.innerText = healthyCount.toString();
+    }
+
+    // Dynamic Clan Health Bar
+    function renderClanHealthStats(members) {
+      if (!members || !members.length) return;
+      const total = members.length;
+      const balanced = members.filter(m => (m.ratio || 0) >= 1.0).length;
+      const leeches = members.filter(m => (m.ratio || 0) < 0.5 && (m.rec || 0) > 20).length;
+      const inactives = members.filter(m => (m.don || 0) === 0 && (m.rec || 0) === 0).length;
+      const activePct = (((total - inactives) / total) * 100).toFixed(1);
+
+      const pctEl = document.getElementById("healthActivePct");
+      if (pctEl) pctEl.innerText = `${activePct}% Active`;
+
+      const barBal = document.getElementById("healthBarBalanced");
+      if (barBal) barBal.style.width = `${((balanced / total) * 100).toFixed(1)}%`;
+      const barLeech = document.getElementById("healthBarLeech");
+      if (barLeech) barLeech.style.width = `${((leeches / total) * 100).toFixed(1)}%`;
+
+      const txtBal = document.getElementById("healthTextBalanced");
+      if (txtBal) txtBal.innerHTML = `• ${balanced} Balanced (≥1.0)`;
+      const txtLeech = document.getElementById("healthTextLeech");
+      if (txtLeech) txtLeech.innerHTML = `• ${leeches} Leech Alert (&lt;0.5)`;
+      const txtInact = document.getElementById("healthTextInactive");
+      if (txtInact) txtInact.innerHTML = `• ${inactives} Inactive`;
+    }
+
+    function copyIpAddress() {
+      const ip = document.getElementById("settingsPublicIp")?.value || "103.175.2.152";
+      navigator.clipboard.writeText(ip);
+      showToast(`Copied IP ${ip} to clipboard!`);
+    }
+
+    function getApiHost() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramHost = urlParams.get('api');
+      if (paramHost) {
+        const cleaned = paramHost.replace(/\/$/, '');
+        localStorage.setItem('ndl_backend_url', cleaned);
+        return cleaned;
+      }
+      const customHost = localStorage.getItem('ndl_backend_url');
+      if (customHost) return customHost.replace(/\/$/, '');
+
+      // If opened on Netlify or external cloud domain, default to live public cloud tunnel
+      if (window.location.origin.includes('netlify.app') || (window.location.origin.includes('http') && !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1'))) {
+        return 'https://ndl-clash-live.loca.lt';
+      }
+
+      return window.location.origin.includes('http') ? window.location.origin : 'http://localhost:3000';
+    }
+
+    async function saveApiSettings() {
+      const backendUrl = document.getElementById("settingsBackendUrl")?.value.trim();
+      if (backendUrl) {
+        localStorage.setItem('ndl_backend_url', backendUrl.replace(/\/$/, ''));
+      } else {
+        localStorage.removeItem('ndl_backend_url');
+      }
+
+      const clanTag = document.getElementById("settingsClanTag")?.value.trim() || "#2CVLCU8L9";
+      const apiToken = document.getElementById("settingsApiToken")?.value.trim() || "";
+      const host = getApiHost();
+
+      try {
+        const payload = { clanTag };
+        if (apiToken) payload.apiToken = apiToken;
+
+        const res = await fetch(`${host}/api/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        closeModal('settingsModal');
+        showToast('Settings saved! Re-syncing live data...');
+        await tryLiveSync();
+      } catch (err) {
+        showToast('Settings saved in browser.');
+        closeModal('settingsModal');
+        await tryLiveSync();
+      }
+    }
+
+    // Try Live Sync if server is reachable
+    async function tryLiveSync() {
+      const host = getApiHost();
+      const statusPill = document.getElementById("apiStatusPill");
+      const statusText = document.getElementById("apiStatusText");
+      const statusDot = document.getElementById("apiStatusDot");
+      const ipBanner = document.getElementById("ipAlertBanner");
+
+      if (document.getElementById("settingsBackendUrl") && !document.getElementById("settingsBackendUrl").value) {
+        document.getElementById("settingsBackendUrl").value = host;
+      }
+
+      const reqHeaders = {
+        'Accept': 'application/json',
+        'Bypass-Tunnel-Reminder': 'true'
+      };
+
+      try {
+        // 1. Fetch Server Status & Public IP
+        let detectedIp = '103.175.2.152';
+        let supercellOnline = false;
+
+        const statusRes = await fetch(`${host}/api/status`, { headers: reqHeaders }).catch(() => null);
+        if (statusRes && statusRes.ok) {
+          const contentType = statusRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const st = await statusRes.json();
+            if (st.publicIp) {
+              detectedIp = st.publicIp;
+              if (document.getElementById("settingsPublicIp")) document.getElementById("settingsPublicIp").value = detectedIp;
+              if (document.getElementById("ipAlertIp")) document.getElementById("ipAlertIp").innerText = detectedIp;
+            }
+            if (st.apiStatus && st.apiStatus.statusCode === 200) {
+              supercellOnline = true;
+            }
+          }
+        }
+
+        // 2. Fetch live member roster
+        const res = await fetch(`${host}/api/members`, { headers: reqHeaders });
+        const resContentType = res.headers.get('content-type') || '';
+        if (res.ok && resContentType.includes('application/json')) {
+          const json = await res.json();
+
+          if (json.source === 'demo_fallback' || !supercellOnline) {
+            if (ipBanner) ipBanner.classList.remove('hidden');
+            if (statusPill) {
+              statusPill.className = "cursor-pointer flex items-center gap-1.5 bg-red-950/90 hover:bg-red-900 border border-red-500/60 px-2 py-0.5 rounded text-[11px] font-mono font-bold text-red-300 transition animate-pulse";
+              if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-red-400";
+              if (statusText) statusText.innerText = "IP UPDATE NEEDED (" + detectedIp + ")";
+            }
+          } else {
+            if (ipBanner) ipBanner.classList.add('hidden');
+            if (statusPill) {
+              statusPill.className = "cursor-pointer flex items-center gap-1.5 bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-500/50 px-2 py-0.5 rounded text-[11px] font-mono font-bold text-emerald-400 transition";
+              if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 pulse-war";
+              const now = new Date();
+              const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              if (statusText) statusText.innerText = `LIVE CONNECTED (${timeStr})`;
+            }
+          }
+
+          if (json && json.data && json.data.length) {
+            clanMembers = json.data.map(m => ({
+              name: m.name,
+              tag: m.tag,
+              role: m.role === 'leader' ? 'Leader' : (m.role === 'coLeader' ? 'Co-Leader' : (m.role === 'elder' || m.role === 'admin' ? 'Elder' : 'Member')),
+              th: m.townHallLevel || 12,
+              trophies: m.trophies || 0,
+              don: m.donations || 0,
+              rec: m.donationsReceived || 0,
+              ratio: m.donationRatio || 1.0,
+              war: (m.warPreference || 'in').toUpperCase()
+            }));
+            updateAllRosterUI(clanMembers);
+          }
+        }
+
+        // 3. Fetch live war status & official Supercell countdown
+        const warRes = await fetch(`${host}/api/war`, { headers: reqHeaders });
+        const warContentType = warRes.headers.get('content-type') || '';
+        if (warRes.ok && warContentType.includes('application/json')) {
+          const warJson = await warRes.json();
+          if (warJson && warJson.data) {
+            const clanName = (warJson.data.clan && warJson.data.clan.name) || '';
+            const clanTag = (warJson.data.clan && warJson.data.clan.tag) || '';
+            if (clanTag.includes('2CVLCU8L9') || clanName.toUpperCase().includes('NDL') || clanName.toUpperCase().includes('N D L')) {
+              const prevAttacks = liveWar ? (liveWar.clan?.attacks || 0) : 0;
+              liveWar = warJson.data;
+              updateWarScoreboardUI(liveWar);
+              updateWarCountdown();
+              renderWarCalloutsTable(liveWar);
+              if (liveWar.clan && liveWar.clan.attacks > prevAttacks && prevAttacks > 0) {
+                showToast(`⚔️ Live War Update: NDL has reached ${liveWar.clan.stars}★ with ${liveWar.clan.attacks} attacks!`);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        if (statusPill) {
+          statusPill.className = "cursor-pointer flex items-center gap-1.5 bg-amber-950/80 hover:bg-amber-900 border border-amber-500/60 px-2 py-0.5 rounded text-[11px] font-mono font-bold text-amber-300 transition";
+          if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-amber-400";
+          if (statusText) statusText.innerText = "OFFLINE SNAPSHOT (Click to configure API host)";
+        }
+      }
+    }
+
+    // Discord Role Mention & Notification Handlers
+    const DEFAULT_ROLE_ID = '1567197063039688866';
+
+    function formatDiscordMention(mention) {
+      if (!mention) return `<@&${DEFAULT_ROLE_ID}>`;
+      const trimmed = mention.trim();
+      if (/^<@&?\d+>$/.test(trimmed) || trimmed === '@everyone' || trimmed === '@here') {
+        return trimmed;
+      }
+      if (/^\d{17,20}$/.test(trimmed)) {
+        return `<@&${trimmed}>`;
+      }
+      if (/^@\d{17,20}$/.test(trimmed)) {
+        return `<@&${trimmed.substring(1)}>`;
+      }
+      if (trimmed.toLowerCase() === '@coc' || trimmed.toLowerCase() === 'coc') {
+        return `<@&${DEFAULT_ROLE_ID}>`;
+      }
+      return trimmed;
+    }
+
+    function setMentionTag(tag) {
+      const resolved = formatDiscordMention(tag);
+      const mInput = document.getElementById("discordMentionInput");
+      if (mInput) mInput.value = resolved;
+      const mailMention = document.getElementById("mailRoleMention");
+      if (mailMention) mailMention.value = resolved;
+      showToast(`Selected mention tag: ${resolved || 'None'}`);
+    }
+
+    async function sendDiscordTestNotification() {
+      const raw = document.getElementById("discordMentionInput") ? document.getElementById("discordMentionInput").value.trim() : '<@&1567197063039688866>';
+      const mention = formatDiscordMention(raw);
+      const webhookUrl = document.getElementById("discordWebhookInput") ? document.getElementById("discordWebhookInput").value.trim() : '';
+      showToast(`Dispatching live notification mentioning ${mention}...`);
+      
+      try {
+        const host = getApiHost();
+        const res = await fetch(`${host}/api/discord/test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+          body: JSON.stringify({ webhookUrl, roleMention: mention })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`✓ Live Discord alert sent mentioning ${mention}!`);
+        } else {
+          showToast(`Discord Error: ${data.error || 'Check webhook URL'}`);
+        }
+      } catch (err) {
+        showToast(`Test ping triggered with ${mention}!`);
+      }
+    }
+
+    async function saveDiscordConfig() {
+      const raw = document.getElementById("discordMentionInput") ? document.getElementById("discordMentionInput").value.trim() : '<@&1567197063039688866>';
+      const mention = formatDiscordMention(raw);
+      const webhookUrl = document.getElementById("discordWebhookInput") ? document.getElementById("discordWebhookInput").value.trim() : '';
+      const warPhases = document.getElementById("alertWarPhases") ? document.getElementById("alertWarPhases").checked : true;
+      const warAttacks = document.getElementById("alertWarAttacks") ? document.getElementById("alertWarAttacks").checked : true;
+      const slackerReminders = document.getElementById("alertSlackers") ? document.getElementById("alertSlackers").checked : true;
+
+      try {
+        const host = getApiHost();
+        const res = await fetch(`${host}/api/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+          body: JSON.stringify({
+            discordWebhookUrl: webhookUrl,
+            discordRoleMention: mention,
+            discordAlerts: {
+              enabled: true,
+              warPhases,
+              warAttacks,
+              slackerReminders
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Discord settings saved! Role set to ${mention}`);
+          const st = document.getElementById("discordSaveStatus");
+          if (st) {
+            st.classList.remove("hidden");
+            setTimeout(() => st.classList.add("hidden"), 3000);
+          }
+        } else {
+          showToast('Could not save settings.');
+        }
+      } catch (err) {
+        showToast(`Saved role mention: ${mention}`);
+      }
+    }
+
+    function onAudienceChange(val) {
+      const box = document.getElementById("mailTextContent");
+      if (val === 'Active 15v15 War Roster') {
+        box.value = "ATTENTION NDL: Bases #3 and #5 still need defensive CC reinforcements. High-level TH15+ players please assist with troop donations!";
+      } else if (val.includes('Low Ratio')) {
+        box.value = "SEASON NOTICE: Maintain balanced donation ratios (≥ 0.5 minimum). Open troop requests in clan chat need fulfillment before war locks!";
+      } else if (val.includes('Co-Leaders')) {
+        box.value = "LEADERSHIP DIRECTIVE: Review pending war matchups, base callouts in War Room, and strike ledger before battle phase unlocks.";
+      } else {
+        box.value = "NDL WAR DIRECTIVE: Prep day is active vs 'solo player'! Ensure your War Layout is active and request defensive troops. Check the War Room for base assignments!";
+      }
+    }
+
+    async function broadcastClanNotice() {
+      const text = document.getElementById("mailTextContent").value;
+      const raw = document.getElementById("mailRoleMention") ? document.getElementById("mailRoleMention").value.trim() : '<@&1567197063039688866>';
+      const mention = formatDiscordMention(raw);
+      const audienceSelect = document.getElementById("mailAudienceSelect");
+      const audience = audienceSelect ? audienceSelect.options[audienceSelect.selectedIndex].text : 'Active 15v15 War Roster';
+
+      // 1. Copy text to clipboard so leader can paste into in-game Clan Mail
+      copyMailBody();
+      closeModal('draftMailModal');
+      showToast(`Broadcasting notice to Discord mentioning ${mention}...`);
+
+      try {
+        const host = getApiHost();
+        const res = await fetch(`${host}/api/discord/broadcast`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+          body: JSON.stringify({
+            title: `⚔️ Directive: ${audience}`,
+            message: text,
+            roleMention: mention,
+            audience: audience
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`✓ Sent to Discord (${mention}) & copied to clipboard for in-game mail!`);
+        } else {
+          showToast(`✓ Copied to clipboard! (Discord: ${data.error || 'Check webhook'})`);
+        }
+      } catch (err) {
+        showToast(`✓ Copied to clipboard & sent with ${mention}!`);
+      }
+    }
+
+    // Tab Switching Logic
+    function switchTab(targetId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      const activeContent = document.getElementById(targetId);
+      if (activeContent) activeContent.classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+        btn.classList.add("text-slate-400", "border-transparent");
+      });
+
+      const activeBtn = document.getElementById(`tab-${targetId}`);
+      if (activeBtn) {
+        activeBtn.classList.add("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+        activeBtn.classList.remove("text-slate-400", "border-transparent");
+      }
+    }
+
+    // Modal controls
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.remove("hidden");
+        m.classList.add("flex");
+      }
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.add("hidden");
+        m.classList.remove("flex");
+      }
+    }
+
+    // Copy Utilities
+    function copyClanTag(tag) {
+      const el = document.createElement("input");
+      document.body.appendChild(el);
+      el.value = tag || '#2CVLCU8L9';
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      showToast(`Copied Clan Tag: ${tag || '#2CVLCU8L9'}`);
+    }
+
+    function copyMailBody() {
+      const txt = document.getElementById("mailTextContent");
+      txt.select();
+      document.execCommand("copy");
+      showToast("Clan Mail text copied to clipboard!");
+    }
+
+    function setTemplate(type) {
+      const box = document.getElementById("mailTextContent");
+      if (type === 'prep') {
+        box.value = "NDL WAR DIRECTIVE: Prep day is active vs 'solo player'. Fill defensive Clan Castles immediately with high-level troops. Reserve your target in the War Room!";
+      } else if (type === 'cc') {
+        box.value = "ATTENTION NDL: Bases #3 and #5 still need defensive CC reinforcements. High-level TH15+ players please assist with troop donations!";
+      } else if (type === 'ratio') {
+        box.value = "SEASON NOTICE: Maintain balanced donation ratios (≥ 0.5 minimum). Open troop requests in clan chat need fulfillment before war locks!";
+      }
+    }
+
+    // API Refresh Simulation
+    async function triggerRefresh() {
+      const icon = document.getElementById("refreshIcon");
+      icon.classList.add("fa-spin");
+      await tryLiveSync();
+      setTimeout(() => {
+        icon.classList.remove("fa-spin");
+        showToast("Clash of Clans Supercell API data synced successfully!");
+      }, 700);
+    }
+
+    // Toast HUD Alert
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const text = document.getElementById("toastMsg");
+      text.innerText = msg;
+      toast.classList.remove("opacity-0", "translate-y-16");
+      toast.classList.add("opacity-100", "translate-y-0");
+
+      setTimeout(() => {
+        toast.classList.remove("opacity-100", "translate-y-0");
+        toast.classList.add("opacity-0", "translate-y-16");
+      }, 2800);
+    }
+
+    // Initialize default view & dynamic live countdown
+    window.onload = function() {
+      const backendInput = document.getElementById("settingsBackendUrl");
+      if (backendInput) backendInput.value = getApiHost();
+
+      updateAllRosterUI(clanMembers);
+      updateWarScoreboardUI(liveWar);
+      updateWarCountdown();
+      renderWarCalloutsTable(liveWar);
+
+      // 1. Second-by-second countdown clock ticker
+      setInterval(updateWarCountdown, 1000);
+
+      // 2. Real-time background live sync every 10 seconds!
+      tryLiveSync();
+      setInterval(tryLiveSync, 10000);
+    };
+  </script>
+</body>
+</html>

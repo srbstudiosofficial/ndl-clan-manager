@@ -1,0 +1,337 @@
+{
+  "state": "inWar",
+  "teamSize": 15,
+  "attacksPerMember": 2,
+  "battleModifier": "none",
+  "preparationStartTime": "20261106T061041.000Z",
+  "startTime": "20261107T051041.000Z",
+  "endTime": "20261108T051041.000Z",
+  "clan": {
+    "tag": "#2CVLCU8L9",
+    "name": "N D L",
+    "badgeUrls": {
+      "small": "https://api-assets.clashofclans.com/badges/70/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png"
+    },
+    "clanLevel": 1,
+    "attacks": 5,
+    "stars": 12,
+    "destructionPercentage": 30.666666,
+    "members": [
+      {
+        "tag": "#QJ2UJ8LU2",
+        "name": "zenin",
+        "townhallLevel": 13,
+        "mapPosition": 4,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#YLLLUJ2U0",
+        "name": "MAD",
+        "townhallLevel": 15,
+        "mapPosition": 3,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#90Y2JYPUV",
+        "name": "leetsu",
+        "townhallLevel": 17,
+        "mapPosition": 1,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#2G008RYV2",
+        "name": "Eric Eagle",
+        "townhallLevel": 12,
+        "mapPosition": 6,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R8LV8J8QU",
+        "name": "urumb_SuLu",
+        "townhallLevel": 7,
+        "mapPosition": 12,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R9LRGV0QU",
+        "name": "VENUS",
+        "townhallLevel": 6,
+        "mapPosition": 14,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#Q9R809GQ2",
+        "name": "ʙʟᴀᴄᴋ 777",
+        "townhallLevel": 12,
+        "mapPosition": 5,
+        "attacks": [
+          {
+            "attackerTag": "#Q9R809GQ2",
+            "defenderTag": "#R8V2QG299",
+            "stars": 2,
+            "destructionPercentage": 88,
+            "order": 2,
+            "duration": 124
+          },
+          {
+            "attackerTag": "#Q9R809GQ2",
+            "defenderTag": "#GR9992U0U",
+            "stars": 3,
+            "destructionPercentage": 100,
+            "order": 3,
+            "duration": 129
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R9C0YLVLR",
+        "name": "Draiven",
+        "townhallLevel": 4,
+        "mapPosition": 15,
+        "attacks": [
+          {
+            "attackerTag": "#R9C0YLVLR",
+            "defenderTag": "#R2RRVCLP8",
+            "stars": 2,
+            "destructionPercentage": 86,
+            "order": 4,
+            "duration": 180
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#QYRJCPVPJ",
+        "name": "么RAVEN",
+        "townhallLevel": 12,
+        "mapPosition": 9,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#RYVVLCUUG",
+        "name": "D X G",
+        "townhallLevel": 7,
+        "mapPosition": 13,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#PU9YRL0YG",
+        "name": "Son of Landings",
+        "townhallLevel": 11,
+        "mapPosition": 11,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#LG2JQCR2P",
+        "name": "AK",
+        "townhallLevel": 15,
+        "mapPosition": 2,
+        "attacks": [
+          {
+            "attackerTag": "#LG2JQCR2P",
+            "defenderTag": "#GV2P0VQLV",
+            "stars": 2,
+            "destructionPercentage": 86,
+            "order": 5,
+            "duration": 108
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#9JQG8RQC9",
+        "name": "DR_METTALIOED",
+        "townhallLevel": 12,
+        "mapPosition": 7,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#LGY2LGLR9",
+        "name": "AEGON XD",
+        "townhallLevel": 12,
+        "mapPosition": 8,
+        "attacks": [
+          {
+            "attackerTag": "#LGY2LGLR9",
+            "defenderTag": "#GGCUVRGLR",
+            "stars": 3,
+            "destructionPercentage": 100,
+            "order": 1,
+            "duration": 118
+          }
+        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#JGLC9JC9",
+        "name": "D@R€ TO REVENG€",
+        "townhallLevel": 11,
+        "mapPosition": 10,
+        "opponentAttacks": 0
+      }
+    ]
+  },
+  "opponent": {
+    "tag": "#2CJYJ0JG2",
+    "name": "solo player",
+    "badgeUrls": {
+      "small": "https://api-assets.clashofclans.com/badges/70/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png"
+    },
+    "clanLevel": 5,
+    "attacks": 0,
+    "stars": 0,
+    "destructionPercentage": 0,
+    "members": [
+      {
+        "tag": "#GGRVCQL2P",
+        "name": "salsalako",
+        "townhallLevel": 9,
+        "mapPosition": 13,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GR9992U0U",
+        "name": "ayaw kol baPako",
+        "townhallLevel": 12,
+        "mapPosition": 7,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#Q9R809GQ2",
+          "defenderTag": "#GR9992U0U",
+          "stars": 3,
+          "destructionPercentage": 100,
+          "order": 3,
+          "duration": 129
+        }
+      },
+      {
+        "tag": "#GGCUVRGLR",
+        "name": "jacolero2",
+        "townhallLevel": 12,
+        "mapPosition": 8,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#LGY2LGLR9",
+          "defenderTag": "#GGCUVRGLR",
+          "stars": 3,
+          "destructionPercentage": 100,
+          "order": 1,
+          "duration": 118
+        }
+      },
+      {
+        "tag": "#GJUCP8URJ",
+        "name": "paralulo",
+        "townhallLevel": 15,
+        "mapPosition": 3,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GVQVVCCYR",
+        "name": "mark",
+        "townhallLevel": 15,
+        "mapPosition": 2,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GVJQ9R0YL",
+        "name": "utugan",
+        "townhallLevel": 13,
+        "mapPosition": 4,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R0929LR29",
+        "name": "paraluci",
+        "townhallLevel": 11,
+        "mapPosition": 10,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R0CYQ9JVV",
+        "name": "giatay ka",
+        "townhallLevel": 10,
+        "mapPosition": 12,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R22G8QYQQ",
+        "name": "paraluci 2",
+        "townhallLevel": 12,
+        "mapPosition": 9,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R2RRVCLP8",
+        "name": "reymark",
+        "townhallLevel": 8,
+        "mapPosition": 15,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#R9C0YLVLR",
+          "defenderTag": "#R2RRVCLP8",
+          "stars": 2,
+          "destructionPercentage": 86,
+          "order": 4,
+          "duration": 180
+        }
+      },
+      {
+        "tag": "#R9YC2G00J",
+        "name": "boss",
+        "townhallLevel": 13,
+        "mapPosition": 6,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R99UJP2P0",
+        "name": "sa puso ng maha",
+        "townhallLevel": 7,
+        "mapPosition": 14,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R8V2QG299",
+        "name": "butoon",
+        "townhallLevel": 13,
+        "mapPosition": 5,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#Q9R809GQ2",
+          "defenderTag": "#R8V2QG299",
+          "stars": 2,
+          "destructionPercentage": 88,
+          "order": 2,
+          "duration": 124
+        }
+      },
+      {
+        "tag": "#GV2P0VQLV",
+        "name": "kulotske",
+        "townhallLevel": 15,
+        "mapPosition": 1,
+        "opponentAttacks": 1,
+        "bestOpponentAttack": {
+          "attackerTag": "#LG2JQCR2P",
+          "defenderTag": "#GV2P0VQLV",
+          "stars": 2,
+          "destructionPercentage": 86,
+          "order": 5,
+          "duration": 108
+        }
+      },
+      {
+        "tag": "#GUCQL8UGJ",
+        "name": "bossrey12",
+        "townhallLevel": 11,
+        "mapPosition": 11,
+        "opponentAttacks": 0
+      }
+    ]
+  }
+}
