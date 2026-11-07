@@ -2341,12 +2341,17 @@
       const customHost = localStorage.getItem('ndl_backend_url');
       if (customHost) return customHost.replace(/\/$/, '');
 
-      // If opened on Netlify or external cloud domain, default to live public cloud tunnel
-      if (window.location.origin.includes('netlify.app') || (window.location.origin.includes('http') && !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1'))) {
+      // If opened as a local static file (file://) or on Netlify without backend, default to live cloud tunnel
+      if (window.location.protocol === 'file:' || window.location.origin.includes('netlify.app')) {
         return 'https://ndl-clash-live.loca.lt';
       }
 
-      return window.location.origin.includes('http') ? window.location.origin : 'http://localhost:3000';
+      // If running on Render, localhost, or any server hosting server.js, use current origin
+      if (window.location.origin && window.location.origin.startsWith('http')) {
+        return window.location.origin;
+      }
+
+      return 'http://localhost:3000';
     }
 
     async function saveApiSettings() {
