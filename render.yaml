@@ -11,7 +11,7 @@ services:
       - key: COC_CLAN_TAG
         value: "#2CVLCU8L9"
       - key: DISCORD_WEBHOOK_URL
-        value: "https://discord.com/api/webhooks/1568196993493369008/6pT31sR5uAMkWBzgjqVVfaim4xOOmt0lD7z1kxodrhMvTzPQifI9drj6bVDYYV9GZc-W"
+        sync: false
       - key: DISCORD_ROLE_MENTION
         value: "<@&1567197063039688866>"
       - key: DEMO_MODE

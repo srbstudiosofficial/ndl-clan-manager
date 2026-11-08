@@ -256,7 +256,8 @@ const server = http.createServer(async (req, res) => {
       configured: !config.demoMode && !!config.apiToken && !!config.clanTag,
       publicIp,
       apiStatus: { ...lastApiStatus, currentPublicIp: publicIp },
-      discordWebhookUrl: config.discordWebhookUrl || '',
+      hasDiscordWebhook: !!config.discordWebhookUrl,
+      discordWebhookUrl: config.discordWebhookUrl ? config.discordWebhookUrl.replace(/(webhooks\/\d+\/)(.+)/, '$1••••••••') : '',
       discordRoleMention: config.discordRoleMention || '@coc',
       discordAlerts: config.discordAlerts || {
         enabled: false,
@@ -280,7 +281,10 @@ const server = http.createServer(async (req, res) => {
         };
 
         if (typeof payload.discordWebhookUrl === 'string') {
-          updatedConfig.discordWebhookUrl = payload.discordWebhookUrl.trim();
+          const incomingWebhook = payload.discordWebhookUrl.trim();
+          if (incomingWebhook && !incomingWebhook.includes('••••')) {
+            updatedConfig.discordWebhookUrl = incomingWebhook;
+          }
         }
 
         if (typeof payload.discordRoleMention === 'string') {
