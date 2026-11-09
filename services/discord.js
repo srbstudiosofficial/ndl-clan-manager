@@ -11,6 +11,40 @@ const EMBED_COLORS = {
 
 const DEFAULT_ROLE_ID = '1567197063039688866';
 
+// Curated Random War Outcome Message Banks (Win Celebrations & Loss Motivation)
+const WAR_WIN_MESSAGES = [
+  "Outstanding warfare clan! We crushed '{opp}' with sheer strategy and lethal triples. Celebrate the loot, rest your heroes, and prepare for next war!",
+  "GLORIOUS WIN NDL! '{opp}' had no answer to our attacks! Huge shoutout to top performers and everyone who cleared their mirror. The legacy continues!",
+  "WAR WON: Dominant performance against '{opp}'! Perfect communication and clutch cleanup attacks sealed the win. Collect your war bonus, clan!",
+  "NDL SUPREMACY: Enemy base flattened vs '{opp}'! Every star and every percentage point counted. Great discipline on attacks. On to the next win streak!",
+  "VICTORY DECREE: Naadan Legacy stands tall over '{opp}'! Elite execution across the entire roster. Enjoy the war loot, upgrades start now!",
+  "CHAMPIONS OF WAR! Another clan humbled. Incredible teamwork vs '{opp}'. Heroes upgraded, armies reloaded — next opponent won't know what hit them!",
+  "WAR SECURED: Total domination against '{opp}'! Massive congratulations to all war participants. Bank the ores and war loot. Naadan Legacy reigns supreme!",
+  "NDL TRIUMPH: Flawless offense and rock-solid defensive CCs vs '{opp}'! That is how champions war. Upgrade heroes and get ready for the next matchup!"
+];
+
+const WAR_LOSS_MESSAGES = [
+  "NDL MOTIVATION: Tough battle vs '{opp}', but true warriors learn from every loss. Analyze your replays, refine army comps, and we will bounce back stronger!",
+  "HEADS HIGH NDL: Every defeat is just tuition for our next win streak. We fought hard against '{opp}'. Review base layouts, practice FCs, and reload!",
+  "REGROUP & REBUILD: Losses don't define Naadan Legacy — how we answer them does. Let's patch defense gaps, sharpen war attacks, and conquer the next matchup!",
+  "SOLDIERS OF NDL: Pain is temporary, greatness is eternal. '{opp}' took this one, but we are coming back deadlier. Focus on heroes and friendly challenges!",
+  "WAR NOTICE: We fell short this round, but the hunger remains. Every champion stumbles before their biggest winning streak. Stay united, NDL will rise!",
+  "NEVER SURRENDER: A setback is only a setup for a legendary comeback. Learn from missed triples, request feedback in chat, and let's dominate the next war!",
+  "BOUNCE BACK NDL: Great effort vs '{opp}'. Every war teaches us something new. Keep practicing with clanmates and hero equipment. Victory is around the corner!",
+  "WARRIOR SPIRIT: A loss only sharpens our edge. We dust ourselves off, learn from our mistakes, and prepare for revenge in the next war. Stay strong, NDL!"
+];
+
+const WAR_TIE_MESSAGES = [
+  "STANDOFF NDL: Dead heat against '{opp}'! Both clans fought to the wire. Every single percentage point mattered. We push even harder next war!",
+  "INTENSE DRAW: Tied score vs '{opp}'! A razor-close battle that showed our grit. Refuel armies and sharpen strategies for the next conquest!"
+];
+
+function getRandomMessage(arr, oppName) {
+  if (!arr || !arr.length) return '';
+  const idx = Math.floor(Math.random() * arr.length);
+  return arr[idx].replace(/{opp}/g, oppName || 'Opponent').replace(/{opponent}/g, oppName || 'Opponent');
+}
+
 // Resolves raw strings (@coc, role ID digits, <@&...>) into Discord role mention syntax
 function formatDiscordMention(mention) {
   if (!mention) return `<@&${DEFAULT_ROLE_ID}>`;
@@ -159,13 +193,34 @@ async function sendWarPhaseNotification(webhookUrl, war, clan, phase, roleMentio
   } else if (phase === 'warEnded') {
     const ourStars = war.clan.stars || 0;
     const enemyStars = war.opponent ? war.opponent.stars : 0;
-    const isWin = ourStars > enemyStars;
-    const isTie = ourStars === enemyStars;
+    const ourDmg = war.clan.destructionPercentage || 0;
+    const enemyDmg = war.opponent ? war.opponent.destructionPercentage || 0 : 0;
+    const isWin = ourStars > enemyStars || (ourStars === enemyStars && ourDmg > enemyDmg);
+    const isTie = ourStars === enemyStars && ourDmg === enemyDmg;
 
-    headerContent = `${mention}🏁 **WAR HAS ENDED!**`;
-    title = isWin ? `🏆 VICTORY for ${clanName}!` : isTie ? `🤝 War Ended in a TIE!` : `💔 Defeat in Clan War`;
-    description = `Final Score: **${clanName} ${ourStars} ⭐** (${(war.clan.destructionPercentage || 0).toFixed(1)}%) vs **${enemyName} ${enemyStars} ⭐** (${(war.opponent ? war.opponent.destructionPercentage || 0 : 0).toFixed(1)}%)`;
-    color = isWin ? EMBED_COLORS.GREEN : isTie ? EMBED_COLORS.GOLD : EMBED_COLORS.RED;
+    let quoteText = '';
+    let quoteTitle = '';
+    if (isWin) {
+      quoteText = getRandomMessage(WAR_WIN_MESSAGES, enemyName);
+      quoteTitle = '🎉 Victory Celebration';
+      headerContent = `${mention}🏆 **WAR VICTORY FOR ${clanName}!**`;
+      title = `🏆 VICTORY for ${clanName}!`;
+      color = EMBED_COLORS.GREEN;
+    } else if (isTie) {
+      quoteText = getRandomMessage(WAR_TIE_MESSAGES, enemyName);
+      quoteTitle = '⚔️ Standoff Directive';
+      headerContent = `${mention}🤝 **WAR ENDED IN A DRAW!**`;
+      title = `🤝 War Ended in a TIE!`;
+      color = EMBED_COLORS.GOLD;
+    } else {
+      quoteText = getRandomMessage(WAR_LOSS_MESSAGES, enemyName);
+      quoteTitle = '🛡️ Motivation & Regrouping';
+      headerContent = `${mention}🛡️ **WAR CONCLUDED — REGROUP NDL!**`;
+      title = `💔 Defeat in Clan War vs ${enemyName}`;
+      color = EMBED_COLORS.RED;
+    }
+
+    description = `Final Score: **${clanName} ${ourStars} ⭐** (${ourDmg.toFixed(1)}%) vs **${enemyName} ${enemyStars} ⭐** (${enemyDmg.toFixed(1)}%)\n\n**${quoteTitle}:**\n*"${quoteText}"*`;
   }
 
   const payload = {
@@ -300,6 +355,10 @@ async function sendCustomAnnouncement(webhookUrl, clan, title, message, roleMent
 
 module.exports = {
   DEFAULT_ROLE_ID,
+  WAR_WIN_MESSAGES,
+  WAR_LOSS_MESSAGES,
+  WAR_TIE_MESSAGES,
+  getRandomMessage,
   formatDiscordMention,
   buildAllowedMentions,
   postDiscordWebhook,

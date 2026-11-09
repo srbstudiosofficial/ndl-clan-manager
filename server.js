@@ -327,6 +327,43 @@ const server = http.createServer(async (req, res) => {
         }
 
         const roleMention = payload.roleMention || config.discordRoleMention || '@coc';
+
+        // Direct Simulation of Win or Loss motivation notification to Discord
+        if (payload.type === 'win' || payload.type === 'loss') {
+          let war = null;
+          try {
+            const warRes = await callCocApi('/clans/{tag}/currentwar');
+            if (warRes.success && warRes.data) war = warRes.data;
+          } catch (e) {}
+          if (!war) {
+            try {
+              war = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'liveWar.json'), 'utf8'));
+            } catch (e) {
+              war = demoCurrentWar;
+            }
+          }
+          const simulatedWar = JSON.parse(JSON.stringify(war));
+          simulatedWar.state = 'warEnded';
+          if (!simulatedWar.clan) simulatedWar.clan = { name: clan.name, stars: 45, destructionPercentage: 88.5 };
+          if (!simulatedWar.opponent) simulatedWar.opponent = { name: 'ARQUITECTOS 1.0', stars: 39, destructionPercentage: 74.2 };
+
+          if (payload.type === 'win') {
+            simulatedWar.clan.stars = Math.max(simulatedWar.clan.stars || 45, 45);
+            simulatedWar.clan.destructionPercentage = 94.5;
+            simulatedWar.opponent.stars = 38;
+            simulatedWar.opponent.destructionPercentage = 75.0;
+          } else {
+            simulatedWar.clan.stars = 36;
+            simulatedWar.clan.destructionPercentage = 76.5;
+            simulatedWar.opponent.stars = Math.max(simulatedWar.opponent.stars || 43, 43);
+            simulatedWar.opponent.destructionPercentage = 91.2;
+          }
+
+          const result = await discord.sendWarPhaseNotification(webhookUrl, simulatedWar, clan, 'warEnded', roleMention);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify(result));
+        }
+
         const result = await discord.sendTestNotification(webhookUrl, clan, roleMention);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify(result));

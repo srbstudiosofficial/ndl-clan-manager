@@ -470,10 +470,13 @@
         <!-- Scoreboard Footer Controls -->
         <div class="mt-2.5 pt-2 border-t border-[#1c273b] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div class="text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
-            <span>3 Clan Castles remain unfortified. Fill friendly CC troops before Battle Day starts!</span>
+            <i id="warFooterNoticeIcon" class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+            <span id="warFooterNoticeText">Defensive Clan Castles require high-level troop reinforcements before battle locks!</span>
           </div>
           <div class="flex items-center gap-2">
+            <button id="postWarBroadcastBtn" onclick="openPostWarNotice()" class="hidden coc-btn-gold text-[#111724] font-tactical font-black text-xs px-2.5 py-1 rounded flex items-center gap-1 shadow-sm">
+              <i class="fa-solid fa-dice text-xs"></i> Post-War Directive 🎲
+            </button>
             <button onclick="switchTab('warRoomTab')" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 bg-[#131a26] px-2.5 py-1 rounded border border-amber-500/40">
               <span>Enter Tactical Matrix</span>
               <i class="fa-solid fa-chevron-right text-[10px]"></i>
@@ -1037,7 +1040,13 @@
             <span id="discordSaveStatus" class="text-xs text-emerald-400 font-mono hidden">✓ Saved</span>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button onclick="sendDiscordWarResultTest('win')" class="coc-btn-metal text-emerald-300 hover:text-white font-bold text-xs px-3 py-1.5 rounded flex items-center gap-1.5 border border-emerald-500/40 shadow-sm" title="Dispatches simulated War Victory alert with random celebration quote">
+              <i class="fa-solid fa-trophy text-emerald-400"></i> Test Win Ping 🎲
+            </button>
+            <button onclick="sendDiscordWarResultTest('loss')" class="coc-btn-metal text-red-300 hover:text-white font-bold text-xs px-3 py-1.5 rounded flex items-center gap-1.5 border border-red-500/40 shadow-sm" title="Dispatches simulated War Defeat alert with random loss motivation quote">
+              <i class="fa-solid fa-shield-heart text-red-400"></i> Test Loss Ping 🎲
+            </button>
             <button onclick="sendDiscordTestNotification()" class="coc-btn-metal text-cyan-300 hover:text-white font-bold text-xs px-3.5 py-1.5 rounded flex items-center gap-2 border border-cyan-500/40 shadow-sm">
               <i class="fa-solid fa-paper-plane text-cyan-400"></i> Dispatch Test @coc Ping
             </button>
@@ -1089,11 +1098,22 @@
         </div>
 
         <div>
-          <label class="text-slate-300 font-bold block mb-1">Tactical Presets</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-slate-300 font-bold block">Tactical & War Directives</label>
+            <button type="button" onclick="setTemplate('auto_postwar')" class="text-amber-400 hover:text-amber-300 text-[11px] font-mono flex items-center gap-1 font-bold">
+              <i class="fa-solid fa-dice text-amber-400"></i> Smart Post-War Roll
+            </button>
+          </div>
           <div class="flex gap-1.5 flex-wrap">
-            <button type="button" onclick="setTemplate('prep')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">War Prep Directives</button>
-            <button type="button" onclick="setTemplate('cc')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Fill Defensive CCs</button>
-            <button type="button" onclick="setTemplate('ratio')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Donation Warning</button>
+            <button type="button" onclick="setTemplate('prep')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">War Prep</button>
+            <button type="button" onclick="setTemplate('cc')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Fill CCs</button>
+            <button type="button" onclick="setTemplate('ratio')" class="bg-[#111724] hover:bg-[#1a2336] text-amber-300 border border-amber-500/30 px-2 py-1 rounded text-[11px]">Donations</button>
+            <button type="button" onclick="setTemplate('win')" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 shadow-sm" title="Roll a random War Victory celebration announcement">
+              <i class="fa-solid fa-trophy text-emerald-400"></i> Victory Msg 🎲
+            </button>
+            <button type="button" onclick="setTemplate('loss')" class="bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-500/40 px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 shadow-sm" title="Roll a random Defeat Motivation & regrouping announcement">
+              <i class="fa-solid fa-shield-heart text-red-400"></i> Loss Motivation 🎲
+            </button>
           </div>
         </div>
 
@@ -1873,11 +1893,53 @@
         if (scoreboardTimer) scoreboardTimer.innerHTML = `<i class="fa-solid fa-trophy mr-1 text-amber-400"></i>FINAL RESULTS`;
         if (scoreboardLabel) scoreboardLabel.innerText = "STATUS:";
         if (scoreboardBadge) {
-          scoreboardBadge.className = "bg-slate-700/40 text-slate-300 border border-slate-600 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
-          scoreboardBadge.innerText = "WAR CONCLUDED";
+          const ourStars = (liveWar.clan && liveWar.clan.stars) || 0;
+          const oppStars = (liveWar.opponent && liveWar.opponent.stars) || 0;
+          const ourDmg = (liveWar.clan && liveWar.clan.destructionPercentage) || 0;
+          const oppDmg = (liveWar.opponent && liveWar.opponent.destructionPercentage) || 0;
+          const isWin = ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg);
+          const isTie = ourStars === oppStars && ourDmg === oppDmg;
+          if (isWin) {
+            scoreboardBadge.className = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
+            scoreboardBadge.innerText = "🏆 VICTORY";
+          } else if (isTie) {
+            scoreboardBadge.className = "bg-amber-500/20 text-amber-400 border border-amber-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
+            scoreboardBadge.innerText = "🤝 DRAW";
+          } else {
+            scoreboardBadge.className = "bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
+            scoreboardBadge.innerText = "💔 DEFEAT";
+          }
         }
       }
     }
+
+    // Curated Random War Outcome Message Banks (Win Celebrations & Loss Motivation)
+    const WAR_WIN_MESSAGES = [
+      "NDL VICTORY: Outstanding warfare clan! We crushed '{opp}' with sheer strategy and lethal triples. Celebrate the loot, rest your heroes, and prepare for next war!",
+      "GLORIOUS WIN NDL: '{opp}' had no answer to our attacks! Huge shoutout to top performers and everyone who cleared their mirror. The legacy continues!",
+      "WAR WON: Dominant performance against '{opp}'! Perfect communication and clutch cleanup attacks sealed the win. Collect your war bonus, clan!",
+      "NDL SUPREMACY: Enemy base flattened vs '{opp}'! Every star and every percentage point counted. Great discipline on attacks. On to the next win streak!",
+      "VICTORY DECREE: Naadan Legacy stands tall over '{opp}'! Elite execution across the entire roster. Enjoy the war loot, upgrades start now!",
+      "CHAMPIONS OF WAR: Another clan humbled! Incredible teamwork vs '{opp}'. Heroes upgraded, armies reloaded — next opponent won't know what hit them!",
+      "WAR SECURED: Total domination against '{opp}'! Massive congratulations to all war participants. Bank the ores and war loot. Naadan Legacy reigns supreme!",
+      "NDL TRIUMPH: Flawless offense and rock-solid defensive CCs vs '{opp}'! That is how champions war. Upgrade heroes and get ready for the next matchup!"
+    ];
+
+    const WAR_LOSS_MESSAGES = [
+      "NDL MOTIVATION: Tough battle vs '{opp}', but true warriors learn from every loss. Analyze your replays, refine army comps, and we will bounce back stronger!",
+      "HEADS HIGH NDL: Every defeat is just tuition for our next win streak. We fought hard against '{opp}'. Review base layouts, practice FCs, and reload!",
+      "REGROUP & REBUILD: Losses don't define Naadan Legacy — how we answer them does. Let's patch defense gaps, sharpen war attacks, and conquer the next matchup!",
+      "SOLDIERS OF NDL: Pain is temporary, greatness is eternal. '{opp}' took this one, but we are coming back deadlier. Focus on heroes and friendly challenges!",
+      "WAR NOTICE: We fell short this round, but the hunger remains. Every champion stumbles before their biggest winning streak. Stay united, NDL will rise!",
+      "NEVER SURRENDER: A setback is only a setup for a legendary comeback. Learn from missed triples, request feedback in chat, and let's dominate the next war!",
+      "BOUNCE BACK NDL: Great effort vs '{opp}'. Every war teaches us something new. Keep practicing with clanmates and hero equipment. Victory is around the corner!",
+      "WARRIOR SPIRIT: A loss only sharpens our edge. We dust ourselves off, learn from our mistakes, and prepare for revenge in the next war. Stay strong, NDL!"
+    ];
+
+    const WAR_TIE_MESSAGES = [
+      "STANDOFF NDL: Dead heat against '{opp}'! Both clans fought to the wire. Every single percentage point mattered. We push even harder next war!",
+      "INTENSE DRAW: Tied score vs '{opp}'! A razor-close battle that showed our grit. Refuel armies and sharpen strategies for the next conquest!"
+    ];
 
     // Generate dynamic clan mail text based on active war & phase
     function getDynamicMailTemplate(type) {
@@ -1888,7 +1950,28 @@
       const isBattleDay = startTime && now >= startTime.getTime();
       const phaseText = isBattleDay ? 'Battle day is live' : 'Prep day is active';
 
-      if (type === 'prep') {
+      if (type === 'win') {
+        const idx = Math.floor(Math.random() * WAR_WIN_MESSAGES.length);
+        return WAR_WIN_MESSAGES[idx].replace(/{opp}/g, oppName);
+      } else if (type === 'loss') {
+        const idx = Math.floor(Math.random() * WAR_LOSS_MESSAGES.length);
+        return WAR_LOSS_MESSAGES[idx].replace(/{opp}/g, oppName);
+      } else if (type === 'tie') {
+        const idx = Math.floor(Math.random() * WAR_TIE_MESSAGES.length);
+        return WAR_TIE_MESSAGES[idx].replace(/{opp}/g, oppName);
+      } else if (type === 'auto_postwar') {
+        const ourStars = (liveWar && liveWar.clan && liveWar.clan.stars) || 0;
+        const oppStars = (liveWar && liveWar.opponent && liveWar.opponent.stars) || 0;
+        const ourDmg = (liveWar && liveWar.clan && liveWar.clan.destructionPercentage) || 0;
+        const oppDmg = (liveWar && liveWar.opponent && liveWar.opponent.destructionPercentage) || 0;
+        if (ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg)) {
+          return getDynamicMailTemplate('win');
+        } else if (ourStars === oppStars && ourDmg === oppDmg) {
+          return getDynamicMailTemplate('tie');
+        } else {
+          return getDynamicMailTemplate('loss');
+        }
+      } else if (type === 'prep') {
         return `NDL WAR DIRECTIVE: ${phaseText} vs '${oppName}' (${teamSize}v${teamSize})! Ensure your War Layout is active, fill defensive CCs, and check the War Room for base assignments!`;
       } else if (type === 'cc') {
         return `ATTENTION NDL: Defensive Clan Castles need reinforcements for ${teamSize}v${teamSize} war vs '${oppName}'. High-level TH15+ players please assist with troop donations!`;
@@ -1981,6 +2064,37 @@
           tugNdl.style.width = `${ndlShare}%`;
           tugOpp.style.width = `${(100 - ndlShare).toFixed(1)}%`;
         }
+      }
+
+      // Post-war outcome banner & directive controls
+      const postWarBtn = document.getElementById("postWarBroadcastBtn");
+      const noticeIcon = document.getElementById("warFooterNoticeIcon");
+      const noticeText = document.getElementById("warFooterNoticeText");
+      const isConcluded = war.state === 'warEnded';
+
+      if (isConcluded) {
+        const ourStars = ndlClan.stars || 0;
+        const oppStars = oppClan.stars || 0;
+        const ourDmg = ndlClan.destructionPercentage || 0;
+        const oppDmg = oppClan.destructionPercentage || 0;
+        const isWin = ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg);
+
+        if (postWarBtn) {
+          postWarBtn.classList.remove("hidden");
+          postWarBtn.innerHTML = isWin
+            ? `<i class="fa-solid fa-trophy text-amber-900"></i> Victory Notice 🎲`
+            : `<i class="fa-solid fa-shield-heart text-amber-900"></i> Motivation Notice 🎲`;
+        }
+        if (noticeIcon) {
+          noticeIcon.className = isWin ? "fa-solid fa-trophy text-emerald-400" : "fa-solid fa-shield-heart text-red-400";
+        }
+        if (noticeText) {
+          noticeText.innerText = isWin
+            ? `War concluded in VICTORY! (${ourStars}★ vs ${oppStars}★) Click Victory Notice to dispatch celebration mail.`
+            : `War concluded. (${ourStars}★ vs ${oppStars}★) Click Motivation Notice to dispatch regrouping directive.`;
+        }
+      } else {
+        if (postWarBtn) postWarBtn.classList.add("hidden");
       }
     }
 
@@ -2606,6 +2720,35 @@
       }
     }
 
+    async function sendDiscordWarResultTest(type) {
+      if (!isLeaderAuthenticated()) {
+        requestLeaderAuth(() => sendDiscordWarResultTest(type));
+        return;
+      }
+      const raw = document.getElementById("discordMentionInput") ? document.getElementById("discordMentionInput").value.trim() : '<@&1567197063039688866>';
+      const mention = formatDiscordMention(raw);
+      const webhookUrl = document.getElementById("discordWebhookInput") ? document.getElementById("discordWebhookInput").value.trim() : '';
+      const isWin = type === 'win';
+      showToast(`Dispatching simulated ${isWin ? 'War Victory' : 'Defeat Motivation'} test ping with ${mention}...`);
+
+      try {
+        const host = getApiHost();
+        const res = await fetch(`${host}/api/discord/test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+          body: JSON.stringify({ webhookUrl, roleMention: mention, type: isWin ? 'win' : 'loss' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`✓ Live Discord ${isWin ? 'Victory' : 'Motivation'} alert sent mentioning ${mention}!`);
+        } else {
+          showToast(`Discord: ${data.error || 'Check webhook URL'}`);
+        }
+      } catch (err) {
+        showToast(`Test ${isWin ? 'Victory' : 'Motivation'} ping triggered!`);
+      }
+    }
+
     async function saveDiscordConfig() {
       if (!isLeaderAuthenticated()) {
         requestLeaderAuth(saveDiscordConfig);
@@ -2950,10 +3093,24 @@
       showToast("Clan Mail text copied to clipboard!");
     }
 
+    function openPostWarNotice(type) {
+      openModal('draftMailModal');
+      setTimeout(() => {
+        setTemplate(type || 'auto_postwar');
+      }, 50);
+    }
+
     function setTemplate(type) {
       const box = document.getElementById("mailTextContent");
       if (!box) return;
       box.value = getDynamicMailTemplate(type);
+      if (type === 'win') {
+        showToast('🏆 Rolled random War Victory celebration message!');
+      } else if (type === 'loss') {
+        showToast('🛡️ Rolled random Defeat Motivation message!');
+      } else if (type === 'auto_postwar') {
+        showToast('🎲 Rolled dynamic Post-War message based on match score!');
+      }
     }
 
     // API Refresh Simulation
