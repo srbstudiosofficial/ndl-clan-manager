@@ -1,11 +1,11 @@
 {
   "state": "inWar",
-  "teamSize": 15,
+  "teamSize": 20,
   "attacksPerMember": 2,
   "battleModifier": "none",
-  "preparationStartTime": "20261106T061041.000Z",
-  "startTime": "20261107T051041.000Z",
-  "endTime": "20261108T051041.000Z",
+  "preparationStartTime": "20261108T075856.000Z",
+  "startTime": "20261109T065856.000Z",
+  "endTime": "20261110T065856.000Z",
   "clan": {
     "tag": "#2CVLCU8L9",
     "name": "N D L",
@@ -15,22 +15,29 @@
       "medium": "https://api-assets.clashofclans.com/badges/200/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png"
     },
     "clanLevel": 1,
-    "attacks": 5,
-    "stars": 12,
-    "destructionPercentage": 30.666666,
+    "attacks": 0,
+    "stars": 0,
+    "destructionPercentage": 0,
     "members": [
+      {
+        "tag": "#2U8Q2QU88",
+        "name": "F3ÀR・rohi",
+        "townhallLevel": 14,
+        "mapPosition": 3,
+        "opponentAttacks": 0
+      },
       {
         "tag": "#QJ2UJ8LU2",
         "name": "zenin",
-        "townhallLevel": 13,
-        "mapPosition": 4,
+        "townhallLevel": 14,
+        "mapPosition": 5,
         "opponentAttacks": 0
       },
       {
         "tag": "#YLLLUJ2U0",
         "name": "MAD",
         "townhallLevel": 15,
-        "mapPosition": 3,
+        "mapPosition": 4,
         "opponentAttacks": 0
       },
       {
@@ -44,84 +51,63 @@
         "tag": "#2G008RYV2",
         "name": "Eric Eagle",
         "townhallLevel": 12,
-        "mapPosition": 6,
+        "mapPosition": 9,
         "opponentAttacks": 0
       },
       {
         "tag": "#R8LV8J8QU",
         "name": "urumb_SuLu",
         "townhallLevel": 7,
-        "mapPosition": 12,
+        "mapPosition": 17,
         "opponentAttacks": 0
       },
       {
         "tag": "#R9LRGV0QU",
         "name": "VENUS",
-        "townhallLevel": 6,
-        "mapPosition": 14,
+        "townhallLevel": 7,
+        "mapPosition": 19,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#9LV28JURU",
+        "name": "PEACE SAMA",
+        "townhallLevel": 13,
+        "mapPosition": 6,
         "opponentAttacks": 0
       },
       {
         "tag": "#Q9R809GQ2",
         "name": "ʙʟᴀᴄᴋ 777",
-        "townhallLevel": 12,
-        "mapPosition": 5,
-        "attacks": [
-          {
-            "attackerTag": "#Q9R809GQ2",
-            "defenderTag": "#R8V2QG299",
-            "stars": 2,
-            "destructionPercentage": 88,
-            "order": 2,
-            "duration": 124
-          },
-          {
-            "attackerTag": "#Q9R809GQ2",
-            "defenderTag": "#GR9992U0U",
-            "stars": 3,
-            "destructionPercentage": 100,
-            "order": 3,
-            "duration": 129
-          }
-        ],
+        "townhallLevel": 13,
+        "mapPosition": 8,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R9C0YLVLR",
-        "name": "Draiven",
-        "townhallLevel": 4,
-        "mapPosition": 15,
-        "attacks": [
-          {
-            "attackerTag": "#R9C0YLVLR",
-            "defenderTag": "#R2RRVCLP8",
-            "stars": 2,
-            "destructionPercentage": 86,
-            "order": 4,
-            "duration": 180
-          }
-        ],
+        "tag": "#98QVLL2U0",
+        "name": "devil",
+        "townhallLevel": 12,
+        "mapPosition": 12,
         "opponentAttacks": 0
       },
       {
         "tag": "#QYRJCPVPJ",
         "name": "么RAVEN",
         "townhallLevel": 12,
-        "mapPosition": 9,
+        "mapPosition": 13,
         "opponentAttacks": 0
       },
       {
         "tag": "#RYVVLCUUG",
         "name": "D X G",
         "townhallLevel": 7,
-        "mapPosition": 13,
+        "mapPosition": 18,
         "opponentAttacks": 0
       },
       {
         "tag": "#PU9YRL0YG",
         "name": "Son of Landings",
         "townhallLevel": 11,
-        "mapPosition": 11,
+        "mapPosition": 15,
         "opponentAttacks": 0
       },
       {
@@ -129,209 +115,387 @@
         "name": "AK",
         "townhallLevel": 15,
         "mapPosition": 2,
-        "attacks": [
-          {
-            "attackerTag": "#LG2JQCR2P",
-            "defenderTag": "#GV2P0VQLV",
-            "stars": 2,
-            "destructionPercentage": 86,
-            "order": 5,
-            "duration": 108
-          }
-        ],
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R282P89G9",
+        "name": "SRBTrollersYT",
+        "townhallLevel": 9,
+        "mapPosition": 16,
         "opponentAttacks": 0
       },
       {
         "tag": "#9JQG8RQC9",
         "name": "DR_METTALIOED",
         "townhallLevel": 12,
+        "mapPosition": 10,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#99JUC9QCQ",
+        "name": "nandu",
+        "townhallLevel": 13,
         "mapPosition": 7,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GJQPRRR8V",
+        "name": "nishku",
+        "townhallLevel": 6,
+        "mapPosition": 20,
         "opponentAttacks": 0
       },
       {
         "tag": "#LGY2LGLR9",
         "name": "AEGON XD",
         "townhallLevel": 12,
-        "mapPosition": 8,
-        "attacks": [
-          {
-            "attackerTag": "#LGY2LGLR9",
-            "defenderTag": "#GGCUVRGLR",
-            "stars": 3,
-            "destructionPercentage": 100,
-            "order": 1,
-            "duration": 118
-          }
-        ],
+        "mapPosition": 11,
         "opponentAttacks": 0
       },
       {
         "tag": "#JGLC9JC9",
         "name": "D@R€ TO REVENG€",
         "townhallLevel": 11,
-        "mapPosition": 10,
+        "mapPosition": 14,
         "opponentAttacks": 0
       }
     ]
   },
   "opponent": {
-    "tag": "#2CJYJ0JG2",
-    "name": "solo player",
+    "tag": "#2CC0JUC8G",
+    "name": "ARQUITECTOS 1.0",
     "badgeUrls": {
-      "small": "https://api-assets.clashofclans.com/badges/70/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
-      "large": "https://api-assets.clashofclans.com/badges/512/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
-      "medium": "https://api-assets.clashofclans.com/badges/200/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png"
+      "small": "https://api-assets.clashofclans.com/badges/70/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png"
     },
-    "clanLevel": 5,
+    "clanLevel": 3,
     "attacks": 0,
     "stars": 0,
     "destructionPercentage": 0,
     "members": [
       {
-        "tag": "#GGRVCQL2P",
-        "name": "salsalako",
-        "townhallLevel": 9,
-        "mapPosition": 13,
-        "opponentAttacks": 0
-      },
-      {
-        "tag": "#GR9992U0U",
-        "name": "ayaw kol baPako",
-        "townhallLevel": 12,
-        "mapPosition": 7,
-        "opponentAttacks": 1,
-        "bestOpponentAttack": {
-          "attackerTag": "#Q9R809GQ2",
-          "defenderTag": "#GR9992U0U",
-          "stars": 3,
-          "destructionPercentage": 100,
-          "order": 3,
-          "duration": 129
-        }
-      },
-      {
-        "tag": "#GGCUVRGLR",
-        "name": "jacolero2",
-        "townhallLevel": 12,
-        "mapPosition": 8,
-        "opponentAttacks": 1,
-        "bestOpponentAttack": {
-          "attackerTag": "#LGY2LGLR9",
-          "defenderTag": "#GGCUVRGLR",
-          "stars": 3,
-          "destructionPercentage": 100,
-          "order": 1,
-          "duration": 118
-        }
-      },
-      {
-        "tag": "#GJUCP8URJ",
-        "name": "paralulo",
+        "tag": "#8RVCJ8PRJ",
+        "name": "HOLLYWOOD X2",
         "townhallLevel": 15,
         "mapPosition": 3,
         "opponentAttacks": 0
       },
       {
-        "tag": "#GVQVVCCYR",
-        "name": "mark",
-        "townhallLevel": 15,
+        "tag": "#8RJ0QLLV2",
+        "name": "✌Brandon✌",
+        "townhallLevel": 18,
+        "mapPosition": 1,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#QQQL9C2VU",
+        "name": "Kaztigador",
+        "townhallLevel": 12,
+        "mapPosition": 8,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#8RQLRLCL0",
+        "name": "HOLLYWOOD X1",
+        "townhallLevel": 16,
         "mapPosition": 2,
         "opponentAttacks": 0
       },
       {
-        "tag": "#GVJQ9R0YL",
-        "name": "utugan",
+        "tag": "#QQPL8PYJP",
+        "name": "fabrizio",
         "townhallLevel": 13,
-        "mapPosition": 4,
+        "mapPosition": 15,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R0929LR29",
-        "name": "paraluci",
-        "townhallLevel": 11,
+        "tag": "#QRJCCVGLV",
+        "name": ":v",
+        "townhallLevel": 13,
+        "mapPosition": 11,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R22VVV9C9",
+        "name": "DIEGO:)",
+        "townhallLevel": 12,
         "mapPosition": 10,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R0CYQ9JVV",
-        "name": "giatay ka",
-        "townhallLevel": 10,
-        "mapPosition": 12,
+        "tag": "#R8098P0JL",
+        "name": "DonJuan",
+        "townhallLevel": 11,
+        "mapPosition": 18,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R22G8QYQQ",
-        "name": "paraluci 2",
+        "tag": "#YUC2VRLV0",
+        "name": "HOLLYWOOD X4",
+        "townhallLevel": 10,
+        "mapPosition": 19,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#Q80L02JJV",
+        "name": "Juannibello.",
+        "townhallLevel": 14,
+        "mapPosition": 5,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#8L2Y0J2U8",
+        "name": "HOLLYWOOD X3",
+        "townhallLevel": 9,
+        "mapPosition": 20,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#Q88L2P9PJ",
+        "name": "Redi",
+        "townhallLevel": 12,
+        "mapPosition": 7,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GY9LVUU88",
+        "name": "daereon23",
         "townhallLevel": 12,
         "mapPosition": 9,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R2RRVCLP8",
-        "name": "reymark",
-        "townhallLevel": 8,
-        "mapPosition": 15,
-        "opponentAttacks": 1,
-        "bestOpponentAttack": {
-          "attackerTag": "#R9C0YLVLR",
-          "defenderTag": "#R2RRVCLP8",
-          "stars": 2,
-          "destructionPercentage": 86,
-          "order": 4,
-          "duration": 180
-        }
+        "tag": "#Y8P09GRQV",
+        "name": "lautaro",
+        "townhallLevel": 14,
+        "mapPosition": 4,
+        "opponentAttacks": 0
       },
       {
-        "tag": "#R9YC2G00J",
-        "name": "boss",
+        "tag": "#QGCJR08UY",
+        "name": "Manuk",
+        "townhallLevel": 12,
+        "mapPosition": 14,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#GRJ082Q2P",
+        "name": "macho",
+        "townhallLevel": 12,
+        "mapPosition": 17,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#R9PRCRJ2C",
+        "name": "Samir.",
+        "townhallLevel": 12,
+        "mapPosition": 12,
+        "opponentAttacks": 0
+      },
+      {
+        "tag": "#Y992RQPRL",
+        "name": "Stiven P.M.",
         "townhallLevel": 13,
         "mapPosition": 6,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R99UJP2P0",
-        "name": "sa puso ng maha",
-        "townhallLevel": 7,
-        "mapPosition": 14,
+        "tag": "#LQCRGYYPU",
+        "name": "El-chalan",
+        "townhallLevel": 12,
+        "mapPosition": 16,
         "opponentAttacks": 0
       },
       {
-        "tag": "#R8V2QG299",
-        "name": "butoon",
-        "townhallLevel": 13,
-        "mapPosition": 5,
-        "opponentAttacks": 1,
-        "bestOpponentAttack": {
-          "attackerTag": "#Q9R809GQ2",
-          "defenderTag": "#R8V2QG299",
-          "stars": 2,
-          "destructionPercentage": 88,
-          "order": 2,
-          "duration": 124
-        }
-      },
-      {
-        "tag": "#GV2P0VQLV",
-        "name": "kulotske",
-        "townhallLevel": 15,
-        "mapPosition": 1,
-        "opponentAttacks": 1,
-        "bestOpponentAttack": {
-          "attackerTag": "#LG2JQCR2P",
-          "defenderTag": "#GV2P0VQLV",
-          "stars": 2,
-          "destructionPercentage": 86,
-          "order": 5,
-          "duration": 108
-        }
-      },
-      {
-        "tag": "#GUCQL8UGJ",
-        "name": "bossrey12",
-        "townhallLevel": 11,
-        "mapPosition": 11,
+        "tag": "#GJ9V2Q8C0",
+        "name": "Tirano Rex",
+        "townhallLevel": 12,
+        "mapPosition": 13,
         "opponentAttacks": 0
       }
     ]
-  }
+  },
+  "slackerRadar": [
+    {
+      "tag": "#90Y2JYPUV",
+      "name": "leetsu",
+      "mapPosition": 1,
+      "townhallLevel": 17,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#LG2JQCR2P",
+      "name": "AK",
+      "mapPosition": 2,
+      "townhallLevel": 15,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#2U8Q2QU88",
+      "name": "F3ÀR・rohi",
+      "mapPosition": 3,
+      "townhallLevel": 14,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#YLLLUJ2U0",
+      "name": "MAD",
+      "mapPosition": 4,
+      "townhallLevel": 15,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#QJ2UJ8LU2",
+      "name": "zenin",
+      "mapPosition": 5,
+      "townhallLevel": 14,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#9LV28JURU",
+      "name": "PEACE SAMA",
+      "mapPosition": 6,
+      "townhallLevel": 13,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#99JUC9QCQ",
+      "name": "nandu",
+      "mapPosition": 7,
+      "townhallLevel": 13,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#Q9R809GQ2",
+      "name": "ʙʟᴀᴄᴋ 777",
+      "mapPosition": 8,
+      "townhallLevel": 13,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#2G008RYV2",
+      "name": "Eric Eagle",
+      "mapPosition": 9,
+      "townhallLevel": 12,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#9JQG8RQC9",
+      "name": "DR_METTALIOED",
+      "mapPosition": 10,
+      "townhallLevel": 12,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#LGY2LGLR9",
+      "name": "AEGON XD",
+      "mapPosition": 11,
+      "townhallLevel": 12,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#98QVLL2U0",
+      "name": "devil",
+      "mapPosition": 12,
+      "townhallLevel": 12,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#QYRJCPVPJ",
+      "name": "么RAVEN",
+      "mapPosition": 13,
+      "townhallLevel": 12,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#JGLC9JC9",
+      "name": "D@R€ TO REVENG€",
+      "mapPosition": 14,
+      "townhallLevel": 11,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#PU9YRL0YG",
+      "name": "Son of Landings",
+      "mapPosition": 15,
+      "townhallLevel": 11,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#R282P89G9",
+      "name": "SRBTrollersYT",
+      "mapPosition": 16,
+      "townhallLevel": 9,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#R8LV8J8QU",
+      "name": "urumb_SuLu",
+      "mapPosition": 17,
+      "townhallLevel": 7,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#RYVVLCUUG",
+      "name": "D X G",
+      "mapPosition": 18,
+      "townhallLevel": 7,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#R9LRGV0QU",
+      "name": "VENUS",
+      "mapPosition": 19,
+      "townhallLevel": 7,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    },
+    {
+      "tag": "#GJQPRRR8V",
+      "name": "nishku",
+      "mapPosition": 20,
+      "townhallLevel": 6,
+      "attacksDone": 0,
+      "attacksRemaining": 2,
+      "severity": "danger"
+    }
+  ]
 }

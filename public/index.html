@@ -194,7 +194,7 @@
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-khanda text-amber-400 text-sm"></i>
           <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Current War:</span>
-          <span id="headerWarMatchup" class="font-bold text-white">N D L vs solo player</span>
+          <span id="headerWarMatchup" class="font-bold text-white">N D L vs ARQUITECTOS 1.0</span>
         </div>
         <div class="h-4 w-[1px] bg-slate-700"></div>
         <div class="flex items-center gap-2">
@@ -277,7 +277,7 @@
 
       <button onclick="switchTab('warRoomTab')" id="tab-warRoomTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
         <i class="fa-solid fa-swords text-amber-400"></i> War Callouts Matrix
-        <span class="font-mono text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30">15v15</span>
+        <span id="tabWarSizeBadge" class="font-mono text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30">20v20</span>
       </button>
 
       <button onclick="switchTab('rosterTab')" id="tab-rosterTab" class="tab-btn px-4 py-1.5 rounded hover:bg-[#131a26] text-slate-400 hover:text-slate-200 border border-transparent flex items-center gap-2">
@@ -392,7 +392,7 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#1c273b]">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 pulse-war"></span>
-            <span id="scoreboardWarTitle" class="font-clash text-base font-black text-white tracking-wide">ACTIVE WAR: 15 VS 15</span>
+            <span id="scoreboardWarTitle" class="font-clash text-base font-black text-white tracking-wide">ACTIVE WAR: 20 VS 20</span>
             <span id="scoreboardWarStateBadge" class="bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase animate-pulse">BATTLE DAY LIVE</span>
           </div>
           <div class="flex items-center gap-2 text-xs font-mono">
@@ -442,8 +442,8 @@
           <div class="md:col-span-5 flex items-center gap-3 bg-[#0c1017] p-2.5 rounded border border-[#1b2538] justify-between">
             <div class="flex-grow text-right order-1">
               <div class="flex items-center justify-between">
-                <span id="oppAttacksCount" class="font-mono text-xs text-red-400 font-bold">0 / 30 Attacks</span>
-                <span id="oppClanName" class="font-clash text-lg font-black text-slate-200">solo player</span>
+                <span id="oppAttacksCount" class="font-mono text-xs text-red-400 font-bold">0 / 40 Attacks</span>
+                <span id="oppClanName" class="font-clash text-lg font-black text-slate-200">ARQUITECTOS 1.0</span>
               </div>
               <div class="flex items-center justify-between mt-0.5">
                 <span id="oppDestructionPct" class="font-mono text-sm font-bold text-slate-300">0.0% DMG</span>
@@ -464,7 +464,7 @@
         <!-- Tug-of-war visual destruction progress bar -->
         <div class="w-full bg-[#0a0d14] h-2 rounded overflow-hidden flex border border-[#1a2334]">
           <div id="warTugBarNdl" class="bg-amber-400 h-full transition-all" style="width: 100%" title="NDL Destruction: 30.7%"></div>
-          <div id="warTugBarOpp" class="bg-red-500 h-full transition-all" style="width: 0%" title="solo player Destruction: 0.0%"></div>
+          <div id="warTugBarOpp" class="bg-red-500 h-full transition-all" style="width: 0%" title="Opponent Destruction: 0.0%"></div>
         </div>
 
         <!-- Scoreboard Footer Controls -->
@@ -582,7 +582,7 @@
             <h2 class="font-clash text-lg font-black text-white flex items-center gap-2">
               <i class="fa-solid fa-khanda text-amber-400"></i> War Callouts & Target Reservation
             </h2>
-            <p class="text-xs text-slate-400">15v15 Matchup vs 'solo player' • Call your mirror or cleanup target</p>
+            <p id="warCalloutsSubtitle" class="text-xs text-slate-400">20v20 Matchup vs 'ARQUITECTOS 1.0' • Call your mirror or cleanup target</p>
           </div>
           <div id="warCalloutsLeaderControls" class="hidden flex items-center gap-2">
             <button onclick="pingUnfilledCcsCommand()" class="coc-btn-metal text-amber-300 text-xs font-bold px-3 py-1.5 rounded">
@@ -1081,8 +1081,8 @@
         <div>
           <label class="text-slate-300 font-bold block mb-1">Target Audience</label>
           <select id="mailAudienceSelect" onchange="onAudienceChange(this.value)" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 text-slate-200">
-            <option value="Active 15v15 War Roster">Active 15v15 War Roster</option>
-            <option id="mailAudienceAllOption" value="all">All Clan Members (22)</option>
+            <option id="mailAudienceWarOption" value="Active 20v20 War Roster">Active 20v20 War Roster (20)</option>
+            <option id="mailAudienceAllOption" value="all">All Clan Members (24)</option>
             <option value="Low Ratio Donators (<0.5 ratio)">Low Ratio Donators (&lt;0.5 ratio)</option>
             <option value="Co-Leaders & Elders Only">Co-Leaders & Elders Only</option>
           </select>
@@ -1099,7 +1099,7 @@
 
         <div>
           <label class="text-slate-300 font-bold block mb-1">Clash Mail Body (Max 250 Chars in-game)</label>
-          <textarea id="mailTextContent" rows="4" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-xs text-slate-200 focus:outline-none focus:border-amber-500">NDL DIRECTIVE: War Prep is active vs 'solo player'! Ensure your War Layout is active and request defensive troops. Check the War Room for base assignments!</textarea>
+          <textarea id="mailTextContent" rows="4" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-xs text-slate-200 focus:outline-none focus:border-amber-500" placeholder="Type custom directive or choose a tactical preset above..."></textarea>
         </div>
 
         <div>
@@ -1470,7 +1470,7 @@
     // Live War State & Dynamic Countdown Engine
     let liveWar = {
   "state": "inWar",
-  "teamSize": 15,
+  "teamSize": 20,
   "attacksPerMember": 2,
   "battleModifier": "none",
   "preparationStartTime": "20261106T061041.000Z",
@@ -1645,8 +1645,8 @@
     ]
   },
   "opponent": {
-    "tag": "#2CJYJ0JG2",
-    "name": "solo player",
+    "tag": "#2CC0JUC8G",
+    "name": "ARQUITECTOS 1.0",
     "badgeUrls": {
       "small": "https://api-assets.clashofclans.com/badges/70/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
       "large": "https://api-assets.clashofclans.com/badges/512/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
@@ -1879,21 +1879,66 @@
       }
     }
 
+    // Generate dynamic clan mail text based on active war & phase
+    function getDynamicMailTemplate(type) {
+      const oppName = (liveWar && liveWar.opponent && liveWar.opponent.name) ? liveWar.opponent.name : 'ARQUITECTOS 1.0';
+      const teamSize = (liveWar && (liveWar.teamSize || (liveWar.opponent && liveWar.opponent.members ? liveWar.opponent.members.length : 20))) || 20;
+      const now = Date.now();
+      const startTime = liveWar && liveWar.startTime ? parseCocDate(liveWar.startTime) : null;
+      const isBattleDay = startTime && now >= startTime.getTime();
+      const phaseText = isBattleDay ? 'Battle day is live' : 'Prep day is active';
+
+      if (type === 'prep') {
+        return `NDL WAR DIRECTIVE: ${phaseText} vs '${oppName}' (${teamSize}v${teamSize})! Ensure your War Layout is active, fill defensive CCs, and check the War Room for base assignments!`;
+      } else if (type === 'cc') {
+        return `ATTENTION NDL: Defensive Clan Castles need reinforcements for ${teamSize}v${teamSize} war vs '${oppName}'. High-level TH15+ players please assist with troop donations!`;
+      } else if (type === 'ratio') {
+        return `SEASON NOTICE: Maintain balanced donation ratios (≥ 0.5 minimum). Open troop requests in clan chat need fulfillment before war locks!`;
+      } else {
+        return `NDL WAR DIRECTIVE: ${phaseText} vs '${oppName}' (${teamSize}v${teamSize})! Ensure your War Layout is active and request defensive troops. Check the War Room for base assignments!`;
+      }
+    }
+
     // Update war scoreboard numbers and tug-of-war balance bar
     function updateWarScoreboardUI(war) {
       if (!war) return;
 
-      const totalPossibleAttacks = (war.teamSize || 15) * (war.attacksPerMember || 2);
+      const oppNameStr = (war.opponent && war.opponent.name) ? war.opponent.name : 'ARQUITECTOS 1.0';
+      const teamSizeNum = war.teamSize || (war.opponent && war.opponent.members ? war.opponent.members.length : (war.clan && war.clan.members ? war.clan.members.length : 20));
+      const totalPossibleAttacks = teamSizeNum * (war.attacksPerMember || 2);
       const ndlClan = war.clan || {};
       const oppClan = war.opponent || {};
 
       // Header Matchup
       const headerMatchup = document.getElementById("headerWarMatchup");
-      if (headerMatchup) headerMatchup.innerText = `${ndlClan.name || 'NDL'} vs ${oppClan.name || 'solo player'}`;
+      if (headerMatchup) headerMatchup.innerText = `${ndlClan.name || 'NDL'} vs ${oppNameStr}`;
 
       // Title
       const warTitle = document.getElementById("scoreboardWarTitle");
-      if (warTitle) warTitle.innerText = `ACTIVE WAR: ${war.teamSize || 15} VS ${war.teamSize || 15}`;
+      if (warTitle) warTitle.innerText = `ACTIVE WAR: ${teamSizeNum} VS ${teamSizeNum}`;
+
+      // Tab 2 War Size Badge
+      const tabWarBadge = document.getElementById("tabWarSizeBadge");
+      if (tabWarBadge) tabWarBadge.innerText = `${teamSizeNum}v${teamSizeNum}`;
+
+      // War Callouts Matrix Subtitle
+      const calloutsSubtitle = document.getElementById("warCalloutsSubtitle");
+      if (calloutsSubtitle) {
+        calloutsSubtitle.innerText = `${teamSizeNum}v${teamSizeNum} Matchup vs '${oppNameStr}' • Call your mirror or cleanup target`;
+      }
+
+      // Draft Mail War Audience Option
+      const warAudienceOpt = document.getElementById("mailAudienceWarOption");
+      if (warAudienceOpt) {
+        warAudienceOpt.innerText = `Active ${teamSizeNum}v${teamSizeNum} War Roster (${teamSizeNum})`;
+        warAudienceOpt.value = `Active ${teamSizeNum}v${teamSizeNum} War Roster`;
+      }
+
+      // Auto-update mail textarea if empty or holding legacy 'solo player'
+      const mailBox = document.getElementById("mailTextContent");
+      if (mailBox && (!mailBox.value || mailBox.value.includes('solo player') || mailBox.value.includes('NDL DIRECTIVE: War Prep'))) {
+        mailBox.value = getDynamicMailTemplate('prep');
+      }
 
       // NDL side
       const ndlAtk = document.getElementById("ndlAttacksCount");
@@ -1907,7 +1952,7 @@
 
       // Opponent side
       const oppName = document.getElementById("oppClanName");
-      if (oppName) oppName.innerText = oppClan.name || 'solo player';
+      if (oppName) oppName.innerText = oppNameStr;
 
       const oppAtk = document.getElementById("oppAttacksCount");
       if (oppAtk) oppAtk.innerText = `${oppClan.attacks || 0} / ${totalPossibleAttacks} Attacks`;
@@ -1951,7 +1996,7 @@
       return "th-badge-low";
     }
 
-    // Dynamic War Callouts Matrix Rendering (15v15 Matchup)
+    // Dynamic War Callouts Matrix Rendering
     function renderWarCalloutsTable(war) {
       const tbody = document.getElementById("warCalloutsTableBody");
       if (!tbody) return;
@@ -2607,14 +2652,15 @@
 
     function onAudienceChange(val) {
       const box = document.getElementById("mailTextContent");
-      if (val === 'Active 15v15 War Roster') {
-        box.value = "ATTENTION NDL: Bases #3 and #5 still need defensive CC reinforcements. High-level TH15+ players please assist with troop donations!";
+      if (!box) return;
+      if (val === 'war' || val.includes('War Roster')) {
+        box.value = getDynamicMailTemplate('prep');
       } else if (val.includes('Low Ratio')) {
-        box.value = "SEASON NOTICE: Maintain balanced donation ratios (≥ 0.5 minimum). Open troop requests in clan chat need fulfillment before war locks!";
+        box.value = getDynamicMailTemplate('ratio');
       } else if (val.includes('Co-Leaders')) {
         box.value = "LEADERSHIP DIRECTIVE: Review pending war matchups, base callouts in War Room, and strike ledger before battle phase unlocks.";
       } else {
-        box.value = "NDL WAR DIRECTIVE: Prep day is active vs 'solo player'! Ensure your War Layout is active and request defensive troops. Check the War Room for base assignments!";
+        box.value = getDynamicMailTemplate('prep');
       }
     }
 
@@ -2623,7 +2669,8 @@
       const raw = document.getElementById("mailRoleMention") ? document.getElementById("mailRoleMention").value.trim() : '<@&1567197063039688866>';
       const mention = formatDiscordMention(raw);
       const audienceSelect = document.getElementById("mailAudienceSelect");
-      const audience = audienceSelect ? audienceSelect.options[audienceSelect.selectedIndex].text : 'Active 15v15 War Roster';
+      const currentTeamSize = liveWar ? (liveWar.teamSize || (liveWar.opponent && liveWar.opponent.members ? liveWar.opponent.members.length : 20)) : 20;
+      const audience = audienceSelect ? audienceSelect.options[audienceSelect.selectedIndex].text : `Active ${currentTeamSize}v${currentTeamSize} War Roster`;
 
       // 1. Copy text to clipboard so leader can paste into in-game Clan Mail
       copyMailBody();
@@ -2864,6 +2911,12 @@
       if (m) {
         m.classList.remove("hidden");
         m.classList.add("flex");
+        if (id === 'draftMailModal') {
+          const box = document.getElementById("mailTextContent");
+          if (box && (!box.value || box.value.includes('solo player') || box.value.includes('NDL DIRECTIVE: War Prep'))) {
+            box.value = getDynamicMailTemplate('prep');
+          }
+        }
       }
     }
 
@@ -2899,13 +2952,8 @@
 
     function setTemplate(type) {
       const box = document.getElementById("mailTextContent");
-      if (type === 'prep') {
-        box.value = "NDL WAR DIRECTIVE: Prep day is active vs 'solo player'. Fill defensive Clan Castles immediately with high-level troops. Reserve your target in the War Room!";
-      } else if (type === 'cc') {
-        box.value = "ATTENTION NDL: Bases #3 and #5 still need defensive CC reinforcements. High-level TH15+ players please assist with troop donations!";
-      } else if (type === 'ratio') {
-        box.value = "SEASON NOTICE: Maintain balanced donation ratios (≥ 0.5 minimum). Open troop requests in clan chat need fulfillment before war locks!";
-      }
+      if (!box) return;
+      box.value = getDynamicMailTemplate(type);
     }
 
     // API Refresh Simulation
