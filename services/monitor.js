@@ -58,7 +58,17 @@ class ClanWarMonitor {
       if (this.lastWarState && this.lastWarState !== currentState) {
         console.log(`🔔 War Phase Transition detected: ${this.lastWarState} -> ${currentState}`);
         if (config.discordAlerts.warPhases) {
-          await discord.sendWarPhaseNotification(config.discordWebhookUrl, war, this.currentClan, currentState, roleMention);
+          if (this.lastWarState === 'inWar' && currentState === 'notInWar') {
+            try {
+              const logRes = await this.apiCaller('/clans/{tag}/warlog');
+              if (logRes.success && logRes.data && logRes.data.items && logRes.data.items.length > 0) {
+                const latestWar = { ...logRes.data.items[0], state: 'warEnded', warLogResult: logRes.data.items[0].result };
+                await discord.sendWarPhaseNotification(config.discordWebhookUrl, latestWar, this.currentClan, 'warEnded', roleMention);
+              }
+            } catch (e) {}
+          } else if (currentState !== 'notInWar') {
+            await discord.sendWarPhaseNotification(config.discordWebhookUrl, war, this.currentClan, currentState, roleMention);
+          }
         }
 
         // Reset tracking on new war

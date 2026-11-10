@@ -162,8 +162,8 @@
               <img src="logo.png" alt="NAADAN LEGACY Logo" class="w-full h-full object-cover rounded-b-[10px]" onerror="this.onerror=null; this.src='logo.jpg';">
             </div>
           </div>
-          <!-- Level 1 Badge -->
-          <span class="absolute -bottom-1 -right-1 bg-amber-400 text-[#0a0d14] font-black font-battle text-xs px-1.5 py-0.2 rounded border border-amber-200 shadow-md">LVL 1</span>
+          <!-- Level Badge -->
+          <span id="headerClanLevelBadge" class="absolute -bottom-1 -right-1 bg-amber-400 text-[#0a0d14] font-black font-battle text-xs px-1.5 py-0.2 rounded border border-amber-200 shadow-md">LVL 2</span>
         </div>
 
         <div>
@@ -184,7 +184,7 @@
           </div>
           <p class="text-[11px] text-slate-400 font-semibold tracking-wide flex items-center gap-1.5">
             <i class="fa-solid fa-crosshairs text-amber-500 text-[10px]"></i>
-            <span class="text-amber-200/90 italic">A Legacy for Eternity!!!</span>
+            <span id="headerClanTagline" class="text-amber-200/90 italic">A Legacy for Eternity!!!</span>
           </p>
         </div>
       </div>
@@ -320,12 +320,12 @@
             <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
           </div>
           <div class="flex items-baseline gap-2 mt-1">
-            <span class="font-battle text-3xl font-bold text-amber-400 tracking-wide leading-none">11,200</span>
+            <span id="metricClanPoints" class="font-battle text-3xl font-bold text-amber-400 tracking-wide leading-none">14,200</span>
             <span class="text-[10px] text-slate-400 font-mono">TROPHIES</span>
           </div>
           <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
             <span>Builder Base:</span>
-            <span class="font-mono text-slate-200 font-bold">14,349 ⚙</span>
+            <span id="metricBuilderPoints" class="font-mono text-slate-200 font-bold">15,745 ⚙</span>
           </div>
         </div>
 
@@ -334,17 +334,17 @@
           <div class="rivet-tl"></div><div class="rivet-tr"></div>
           <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
             <span>War Record</span>
-            <span class="font-mono text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 rounded border border-emerald-500/40">100% WR</span>
+            <span id="metricWinRateBadge" class="font-mono text-[10px] text-amber-400 bg-amber-950/60 px-1.5 rounded border border-amber-500/40">33% WR</span>
           </div>
           <div class="flex items-baseline gap-2 mt-1">
-            <span class="font-battle text-3xl font-bold text-emerald-400 leading-none">1W</span>
+            <span id="metricWarWins" class="font-battle text-3xl font-bold text-emerald-400 leading-none">1W</span>
             <span class="text-slate-600 font-bold text-xl">-</span>
-            <span class="font-battle text-3xl font-bold text-slate-500 leading-none">0L</span>
-            <span class="text-[10px] text-slate-400 font-mono">1 DRAW</span>
+            <span id="metricWarLosses" class="font-battle text-3xl font-bold text-red-400 leading-none">2L</span>
+            <span id="metricWarTies" class="text-[10px] text-slate-400 font-mono">0 DRAW</span>
           </div>
           <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
             <span>Win Streak:</span>
-            <span class="font-mono text-emerald-400 font-bold">1 WAR 🔥</span>
+            <span id="metricWinStreak" class="font-mono text-slate-400 font-bold">0 WAR</span>
           </div>
         </div>
 
@@ -353,16 +353,16 @@
           <div class="rivet-tl"></div><div class="rivet-tr"></div>
           <div class="flex items-center justify-between text-slate-400 text-xs uppercase font-bold tracking-wider">
             <span>Roster Size</span>
-            <span class="text-[10px] text-cyan-400 font-mono">OPEN</span>
+            <span id="metricClanType" class="text-[10px] text-cyan-400 font-mono uppercase">INVITE ONLY</span>
           </div>
           <div class="flex items-baseline gap-1.5 mt-1">
-            <span id="deckRosterCount" class="font-battle text-3xl font-bold text-cyan-300 leading-none">22</span>
+            <span id="deckRosterCount" class="font-battle text-3xl font-bold text-cyan-300 leading-none">24</span>
             <span class="text-slate-500 font-bold font-battle text-xl">/ 50</span>
-            <span id="deckSlotsCount" class="text-[10px] text-slate-400 font-mono ml-auto">28 SLOTS AVAILABLE</span>
+            <span id="deckSlotsCount" class="text-[10px] text-slate-400 font-mono ml-auto">26 SLOTS AVAILABLE</span>
           </div>
           <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
             <span>Entry Req:</span>
-            <span class="font-mono text-slate-200 font-bold">TH 1 • 0 Trophies</span>
+            <span id="metricEntryReq" class="font-mono text-slate-200 font-bold">TH 1 • 0 Trophies</span>
           </div>
         </div>
 
@@ -374,11 +374,11 @@
             <span class="text-[10px] text-purple-400 font-mono">RAIDS</span>
           </div>
           <div class="flex items-baseline gap-1.5 mt-1">
-            <span class="font-battle text-2xl font-bold text-purple-300 leading-none">Unlocks at Lv 2</span>
+            <span id="metricClanCapital" class="font-battle text-2xl font-bold text-purple-300 leading-none">Cap Hall Lv 1</span>
           </div>
           <div class="mt-2 pt-2 border-t border-[#1d273a] flex items-center justify-between text-[11px] text-slate-400 font-semibold">
             <span>War League:</span>
-            <span class="font-mono text-amber-500 font-bold">Unranked (Pre-CWL)</span>
+            <span id="metricWarLeague" class="font-mono text-amber-500 font-bold">Unranked</span>
           </div>
         </div>
 
@@ -392,13 +392,13 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#1c273b]">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 pulse-war"></span>
-            <span id="scoreboardWarTitle" class="font-clash text-base font-black text-white tracking-wide">ACTIVE WAR: 20 VS 20</span>
-            <span id="scoreboardWarStateBadge" class="bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase animate-pulse">BATTLE DAY LIVE</span>
+            <span id="scoreboardWarTitle" class="font-clash text-base font-black text-white tracking-wide">LAST WAR: 20 VS 20</span>
+            <span id="scoreboardWarStateBadge" class="bg-red-500/20 text-red-400 border border-red-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase">💔 DEFEAT</span>
           </div>
           <div class="flex items-center gap-2 text-xs font-mono">
-            <span id="scoreboardCountdownLabel" class="text-slate-400 font-semibold">WAR CLOSES IN:</span>
+            <span id="scoreboardCountdownLabel" class="text-slate-400 font-semibold">STATUS:</span>
             <span id="scoreboardCountdownTimer" class="bg-[#0b0e14] text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/30">
-              <i class="fa-regular fa-clock mr-1"></i>CALCULATING...
+              <i class="fa-solid fa-trophy mr-1 text-amber-400"></i>FINAL RESULTS
             </span>
           </div>
         </div>
@@ -410,7 +410,7 @@
           <div class="md:col-span-5 flex items-center gap-3 bg-[#0c1017] p-2.5 rounded border border-[#1b2538]">
             <div class="w-12 h-12 rounded-lg bg-[#101724] border border-amber-500/60 p-0.5 flex-shrink-0 overflow-hidden relative shadow-[0_0_10px_rgba(245,158,11,0.25)]">
               <img src="logo.png" alt="NDL Logo" class="w-full h-full object-cover rounded" onerror="this.onerror=null; this.src='logo.jpg';">
-              <span class="absolute bottom-0 right-0 bg-amber-500 text-black text-[9px] font-battle font-black px-1 rounded-tl leading-none">LVL 1</span>
+              <span id="scoreboardClanLevelBadge" class="absolute bottom-0 right-0 bg-amber-500 text-black text-[9px] font-battle font-black px-1 rounded-tl leading-none">LVL 2</span>
             </div>
             <div class="flex-grow">
               <div class="flex items-center justify-between">
@@ -418,14 +418,14 @@
                   <span class="font-clash text-lg font-black text-white">NDL</span>
                   <span class="text-[10px] font-battle text-amber-400 tracking-wider">NAADAN LEGACY</span>
                 </div>
-                <span id="ndlAttacksCount" class="font-mono text-xs text-amber-400 font-bold">5 / 30 Attacks</span>
+                <span id="ndlAttacksCount" class="font-mono text-xs text-amber-400 font-bold">26 / 40 Attacks</span>
               </div>
               <div class="flex items-center justify-between mt-0.5">
                 <div class="flex items-center gap-1">
-                  <span id="ndlStarsCount" class="font-battle text-3xl font-black text-amber-400 leading-none">12</span>
+                  <span id="ndlStarsCount" class="font-battle text-3xl font-black text-amber-400 leading-none">55</span>
                   <i class="fa-solid fa-star text-amber-400 text-xs"></i>
                 </div>
-                <span id="ndlDestructionPct" class="font-mono text-sm font-bold text-slate-300">30.7% DMG</span>
+                <span id="ndlDestructionPct" class="font-mono text-sm font-bold text-slate-300">94.9% DMG</span>
               </div>
             </div>
           </div>
@@ -442,20 +442,20 @@
           <div class="md:col-span-5 flex items-center gap-3 bg-[#0c1017] p-2.5 rounded border border-[#1b2538] justify-between">
             <div class="flex-grow text-right order-1">
               <div class="flex items-center justify-between">
-                <span id="oppAttacksCount" class="font-mono text-xs text-red-400 font-bold">0 / 40 Attacks</span>
+                <span id="oppAttacksCount" class="font-mono text-xs text-red-400 font-bold">-- / 40 Attacks</span>
                 <span id="oppClanName" class="font-clash text-lg font-black text-slate-200">ARQUITECTOS 1.0</span>
               </div>
               <div class="flex items-center justify-between mt-0.5">
-                <span id="oppDestructionPct" class="font-mono text-sm font-bold text-slate-300">0.0% DMG</span>
+                <span id="oppDestructionPct" class="font-mono text-sm font-bold text-slate-300">96.15% DMG</span>
                 <div class="flex items-center gap-1">
-                  <span id="oppStarsCount" class="font-battle text-3xl font-black text-slate-400 leading-none">0</span>
-                  <i class="fa-solid fa-star text-slate-500 text-xs"></i>
+                  <span id="oppStarsCount" class="font-battle text-3xl font-black text-emerald-400 leading-none">58</span>
+                  <i class="fa-solid fa-star text-amber-400 text-xs"></i>
                 </div>
               </div>
             </div>
             <div class="w-12 h-12 rounded bg-[#101724] border border-red-500/50 flex flex-col items-center justify-center p-1 flex-shrink-0 order-2">
               <i class="fa-solid fa-shield text-red-400 text-xl"></i>
-              <span id="oppClanLevelBadge" class="text-[9px] font-battle text-red-300 font-bold">LVL 5</span>
+              <span id="oppClanLevelBadge" class="text-[9px] font-battle text-red-300 font-bold">LVL 3</span>
             </div>
           </div>
 
@@ -463,8 +463,8 @@
 
         <!-- Tug-of-war visual destruction progress bar -->
         <div class="w-full bg-[#0a0d14] h-2 rounded overflow-hidden flex border border-[#1a2334]">
-          <div id="warTugBarNdl" class="bg-amber-400 h-full transition-all" style="width: 100%" title="NDL Destruction: 30.7%"></div>
-          <div id="warTugBarOpp" class="bg-red-500 h-full transition-all" style="width: 0%" title="Opponent Destruction: 0.0%"></div>
+          <div id="warTugBarNdl" class="bg-amber-400 h-full transition-all" style="width: 49.7%" title="NDL Destruction: 94.9%"></div>
+          <div id="warTugBarOpp" class="bg-red-500 h-full transition-all" style="width: 50.3%" title="Opponent Destruction: 96.15%"></div>
         </div>
 
         <!-- Scoreboard Footer Controls -->
@@ -1489,13 +1489,14 @@
 
     // Live War State & Dynamic Countdown Engine
     let liveWar = {
-  "state": "inWar",
+  "state": "warEnded",
+  "warLogResult": "lose",
   "teamSize": 20,
   "attacksPerMember": 2,
   "battleModifier": "none",
-  "preparationStartTime": "20261106T061041.000Z",
-  "startTime": "20261107T051041.000Z",
-  "endTime": "20261108T051041.000Z",
+  "preparationStartTime": "20261108T075856.000Z",
+  "startTime": "20261109T065856.000Z",
+  "endTime": "20261110T065856.000Z",
   "clan": {
     "tag": "#2CVLCU8L9",
     "name": "N D L",
@@ -1504,10 +1505,10 @@
       "large": "https://api-assets.clashofclans.com/badges/512/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png",
       "medium": "https://api-assets.clashofclans.com/badges/200/BIZ4D9ihzimhDQ4y8GKb0VbXvJKDiLVIJ_MyIQxDVLA.png"
     },
-    "clanLevel": 1,
-    "attacks": 5,
-    "stars": 12,
-    "destructionPercentage": 30.666666,
+    "clanLevel": 2,
+    "attacks": 26,
+    "stars": 55,
+    "destructionPercentage": 94.9,
     "members": [
       {
         "tag": "#QJ2UJ8LU2",
@@ -1668,14 +1669,14 @@
     "tag": "#2CC0JUC8G",
     "name": "ARQUITECTOS 1.0",
     "badgeUrls": {
-      "small": "https://api-assets.clashofclans.com/badges/70/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
-      "large": "https://api-assets.clashofclans.com/badges/512/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png",
-      "medium": "https://api-assets.clashofclans.com/badges/200/Y9lpvybLq4QJRiN4N6DqzM5ety62kWIxevlSdU-scXo.png"
+      "small": "https://api-assets.clashofclans.com/badges/70/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png",
+      "large": "https://api-assets.clashofclans.com/badges/512/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png",
+      "medium": "https://api-assets.clashofclans.com/badges/200/bjWHgmQ_7q3VCEbLY3BGLe4lNdRN3MWjCy6ldADh7KE.png"
     },
-    "clanLevel": 5,
-    "attacks": 0,
-    "stars": 0,
-    "destructionPercentage": 0,
+    "clanLevel": 3,
+    "attacks": null,
+    "stars": 58,
+    "destructionPercentage": 96.15,
     "members": [
       {
         "tag": "#GGRVCQL2P",
@@ -1847,6 +1848,25 @@
       return `${h}h ${(m < 10 ? '0' : '')}${m}m ${(s < 10 ? '0' : '')}${s}s`;
     }
 
+    // Determine authoritative outcome ('win', 'lose', 'tie')
+    function determineWarOutcome(war) {
+      if (!war) return 'tie';
+      if (war.warLogResult === 'win' || war.result === 'win') return 'win';
+      if (war.warLogResult === 'lose' || war.result === 'lose') return 'lose';
+      if (war.warLogResult === 'tie' || war.result === 'tie') return 'tie';
+
+      const ourStars = (war.clan && war.clan.stars) || 0;
+      const oppStars = (war.opponent && war.opponent.stars) || 0;
+      const ourDmg = (war.clan && war.clan.destructionPercentage) || 0;
+      const oppDmg = (war.opponent && war.opponent.destructionPercentage) || 0;
+
+      if (ourStars > oppStars) return 'win';
+      if (ourStars < oppStars) return 'lose';
+      if (ourDmg > oppDmg) return 'win';
+      if (ourDmg < oppDmg) return 'lose';
+      return 'tie';
+    }
+
     // Live ticking countdown ticker (Runs every 1000ms)
     function updateWarCountdown() {
       if (!liveWar) return;
@@ -1860,9 +1880,9 @@
       const startTime = parseCocDate(liveWar.startTime);
       const endTime = parseCocDate(liveWar.endTime);
 
-      if (!startTime || !endTime) return;
+      if (liveWar.state !== 'warEnded' && (!startTime || !endTime)) return;
 
-      if (now < startTime.getTime()) {
+      if (liveWar.state !== 'warEnded' && startTime && now < startTime.getTime()) {
         // Preparation Phase
         liveWar.state = 'preparation';
         const diff = startTime.getTime() - now;
@@ -1874,7 +1894,7 @@
           scoreboardBadge.className = "bg-amber-500/15 text-amber-300 border border-amber-500/40 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
           scoreboardBadge.innerText = "PREPARATION DAY";
         }
-      } else if (now >= startTime.getTime() && now < endTime.getTime()) {
+      } else if (liveWar.state !== 'warEnded' && startTime && endTime && now >= startTime.getTime() && now < endTime.getTime()) {
         // Battle Phase LIVE
         liveWar.state = 'inWar';
         const diff = endTime.getTime() - now;
@@ -1893,16 +1913,11 @@
         if (scoreboardTimer) scoreboardTimer.innerHTML = `<i class="fa-solid fa-trophy mr-1 text-amber-400"></i>FINAL RESULTS`;
         if (scoreboardLabel) scoreboardLabel.innerText = "STATUS:";
         if (scoreboardBadge) {
-          const ourStars = (liveWar.clan && liveWar.clan.stars) || 0;
-          const oppStars = (liveWar.opponent && liveWar.opponent.stars) || 0;
-          const ourDmg = (liveWar.clan && liveWar.clan.destructionPercentage) || 0;
-          const oppDmg = (liveWar.opponent && liveWar.opponent.destructionPercentage) || 0;
-          const isWin = ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg);
-          const isTie = ourStars === oppStars && ourDmg === oppDmg;
-          if (isWin) {
+          const outcome = determineWarOutcome(liveWar);
+          if (outcome === 'win') {
             scoreboardBadge.className = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
             scoreboardBadge.innerText = "🏆 VICTORY";
-          } else if (isTie) {
+          } else if (outcome === 'tie') {
             scoreboardBadge.className = "bg-amber-500/20 text-amber-400 border border-amber-500/50 text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase";
             scoreboardBadge.innerText = "🤝 DRAW";
           } else {
@@ -1910,6 +1925,84 @@
             scoreboardBadge.innerText = "💔 DEFEAT";
           }
         }
+      }
+    }
+
+    // Update top Clan KPI cards from /api/clan live response
+    function updateClanInfoUI(clan) {
+      if (!clan) return;
+
+      const lvl = clan.clanLevel || 1;
+      const hLvl = document.getElementById("headerClanLevelBadge");
+      if (hLvl) hLvl.innerText = `LVL ${lvl}`;
+      const sLvl = document.getElementById("scoreboardClanLevelBadge");
+      if (sLvl) sLvl.innerText = `LVL ${lvl}`;
+      const tagEl = document.getElementById("headerClanTagline");
+      if (tagEl && clan.description) tagEl.innerText = clan.description;
+
+      const ptsEl = document.getElementById("metricClanPoints");
+      if (ptsEl) ptsEl.innerText = (clan.clanPoints || 0).toLocaleString();
+      const bbEl = document.getElementById("metricBuilderPoints");
+      if (bbEl) bbEl.innerText = `${(clan.clanBuilderBasePoints || 0).toLocaleString()} ⚙`;
+
+      const wins = clan.warWins || 0;
+      const losses = clan.warLosses || 0;
+      const ties = clan.warTies || 0;
+      const totalWars = wins + losses + ties;
+      const wr = totalWars > 0 ? Math.round((wins / totalWars) * 100) : 0;
+      const streak = clan.warWinStreak || 0;
+
+      const wEl = document.getElementById("metricWarWins");
+      if (wEl) wEl.innerText = `${wins}W`;
+      const lEl = document.getElementById("metricWarLosses");
+      if (lEl) {
+        lEl.innerText = `${losses}L`;
+        lEl.className = losses > 0
+          ? "font-battle text-3xl font-bold text-red-400 leading-none"
+          : "font-battle text-3xl font-bold text-slate-500 leading-none";
+      }
+      const tEl = document.getElementById("metricWarTies");
+      if (tEl) tEl.innerText = `${ties} DRAW`;
+
+      const wrEl = document.getElementById("metricWinRateBadge");
+      if (wrEl) {
+        wrEl.innerText = `${wr}% WR`;
+        wrEl.className = wr >= 50
+          ? "font-mono text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 rounded border border-emerald-500/40"
+          : wr >= 30
+            ? "font-mono text-[10px] text-amber-400 bg-amber-950/60 px-1.5 rounded border border-amber-500/40"
+            : "font-mono text-[10px] text-red-400 bg-red-950/60 px-1.5 rounded border border-red-500/40";
+      }
+
+      const stEl = document.getElementById("metricWinStreak");
+      if (stEl) {
+        stEl.innerText = streak > 0 ? `${streak} WAR 🔥` : `0 WAR`;
+        stEl.className = streak > 0
+          ? "font-mono text-emerald-400 font-bold"
+          : "font-mono text-slate-400 font-bold";
+      }
+
+      const typeEl = document.getElementById("metricClanType");
+      if (typeEl && clan.type) {
+        typeEl.innerText = clan.type === 'inviteOnly' ? 'INVITE ONLY' : (clan.type === 'open' ? 'OPEN' : 'CLOSED');
+      }
+
+      const reqEl = document.getElementById("metricEntryReq");
+      if (reqEl) reqEl.innerText = `TH ${clan.requiredTownhallLevel || 1} • ${clan.requiredTrophies || 0} Trophies`;
+
+      const capEl = document.getElementById("metricClanCapital");
+      if (capEl) {
+        if (lvl >= 2) {
+          const capHall = (clan.clanCapital && clan.clanCapital.capitalHallLevel) ? clan.clanCapital.capitalHallLevel : 1;
+          capEl.innerText = `Cap Hall Lv ${capHall}`;
+        } else {
+          capEl.innerText = `Unlocks at Lv 2`;
+        }
+      }
+
+      const wlEl = document.getElementById("metricWarLeague");
+      if (wlEl && clan.warLeague && clan.warLeague.name) {
+        wlEl.innerText = clan.warLeague.name;
       }
     }
 
@@ -1960,17 +2053,10 @@
         const idx = Math.floor(Math.random() * WAR_TIE_MESSAGES.length);
         return WAR_TIE_MESSAGES[idx].replace(/{opp}/g, oppName);
       } else if (type === 'auto_postwar') {
-        const ourStars = (liveWar && liveWar.clan && liveWar.clan.stars) || 0;
-        const oppStars = (liveWar && liveWar.opponent && liveWar.opponent.stars) || 0;
-        const ourDmg = (liveWar && liveWar.clan && liveWar.clan.destructionPercentage) || 0;
-        const oppDmg = (liveWar && liveWar.opponent && liveWar.opponent.destructionPercentage) || 0;
-        if (ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg)) {
-          return getDynamicMailTemplate('win');
-        } else if (ourStars === oppStars && ourDmg === oppDmg) {
-          return getDynamicMailTemplate('tie');
-        } else {
-          return getDynamicMailTemplate('loss');
-        }
+        const outcome = determineWarOutcome(liveWar);
+        if (outcome === 'win') return getDynamicMailTemplate('win');
+        if (outcome === 'tie') return getDynamicMailTemplate('tie');
+        return getDynamicMailTemplate('loss');
       } else if (type === 'prep') {
         return `NDL WAR DIRECTIVE: ${phaseText} vs '${oppName}' (${teamSize}v${teamSize})! Ensure your War Layout is active, fill defensive CCs, and check the War Room for base assignments!`;
       } else if (type === 'cc') {
@@ -1991,14 +2077,16 @@
       const totalPossibleAttacks = teamSizeNum * (war.attacksPerMember || 2);
       const ndlClan = war.clan || {};
       const oppClan = war.opponent || {};
+      const outcome = determineWarOutcome(war);
+      const isConcluded = war.state === 'warEnded' || war.isLastWar;
 
       // Header Matchup
       const headerMatchup = document.getElementById("headerWarMatchup");
-      if (headerMatchup) headerMatchup.innerText = `${ndlClan.name || 'NDL'} vs ${oppNameStr}`;
+      if (headerMatchup) headerMatchup.innerText = `${ndlClan.name || 'N D L'} vs ${oppNameStr}`;
 
       // Title
       const warTitle = document.getElementById("scoreboardWarTitle");
-      if (warTitle) warTitle.innerText = `ACTIVE WAR: ${teamSizeNum} VS ${teamSizeNum}`;
+      if (warTitle) warTitle.innerText = isConcluded ? `LAST WAR: ${teamSizeNum} VS ${teamSizeNum}` : `ACTIVE WAR: ${teamSizeNum} VS ${teamSizeNum}`;
 
       // Tab 2 War Size Badge
       const tabWarBadge = document.getElementById("tabWarSizeBadge");
@@ -2017,10 +2105,10 @@
         warAudienceOpt.value = `Active ${teamSizeNum}v${teamSizeNum} War Roster`;
       }
 
-      // Auto-update mail textarea if empty or holding legacy 'solo player'
+      // Auto-update mail textarea if empty or holding legacy text
       const mailBox = document.getElementById("mailTextContent");
       if (mailBox && (!mailBox.value || mailBox.value.includes('solo player') || mailBox.value.includes('NDL DIRECTIVE: War Prep'))) {
-        mailBox.value = getDynamicMailTemplate('prep');
+        mailBox.value = isConcluded ? getDynamicMailTemplate('auto_postwar') : getDynamicMailTemplate('prep');
       }
 
       // NDL side
@@ -2028,23 +2116,37 @@
       if (ndlAtk) ndlAtk.innerText = `${ndlClan.attacks || 0} / ${totalPossibleAttacks} Attacks`;
 
       const ndlStars = document.getElementById("ndlStarsCount");
-      if (ndlStars) ndlStars.innerText = (ndlClan.stars || 0).toString();
+      if (ndlStars) {
+        ndlStars.innerText = (ndlClan.stars || 0).toString();
+        ndlStars.className = outcome === 'win'
+          ? "font-battle text-3xl font-black text-emerald-400 leading-none"
+          : "font-battle text-3xl font-black text-amber-400 leading-none";
+      }
 
       const ndlDmg = document.getElementById("ndlDestructionPct");
-      if (ndlDmg) ndlDmg.innerText = `${(ndlClan.destructionPercentage || 0).toFixed(1)}% DMG`;
+      if (ndlDmg) ndlDmg.innerText = `${Number((ndlClan.destructionPercentage || 0).toFixed(2))}% DMG`;
 
       // Opponent side
       const oppName = document.getElementById("oppClanName");
       if (oppName) oppName.innerText = oppNameStr;
 
       const oppAtk = document.getElementById("oppAttacksCount");
-      if (oppAtk) oppAtk.innerText = `${oppClan.attacks || 0} / ${totalPossibleAttacks} Attacks`;
+      if (oppAtk) {
+        oppAtk.innerText = (oppClan.attacks !== null && oppClan.attacks !== undefined)
+          ? `${oppClan.attacks} / ${totalPossibleAttacks} Attacks`
+          : `-- / ${totalPossibleAttacks} Attacks`;
+      }
 
       const oppStars = document.getElementById("oppStarsCount");
-      if (oppStars) oppStars.innerText = (oppClan.stars || 0).toString();
+      if (oppStars) {
+        oppStars.innerText = (oppClan.stars || 0).toString();
+        oppStars.className = outcome === 'lose'
+          ? "font-battle text-3xl font-black text-emerald-400 leading-none"
+          : "font-battle text-3xl font-black text-slate-300 leading-none";
+      }
 
       const oppDmg = document.getElementById("oppDestructionPct");
-      if (oppDmg) oppDmg.innerText = `${(oppClan.destructionPercentage || 0).toFixed(1)}% DMG`;
+      if (oppDmg) oppDmg.innerText = `${Number((oppClan.destructionPercentage || 0).toFixed(2))}% DMG`;
 
       const oppLvl = document.getElementById("oppClanLevelBadge");
       if (oppLvl) oppLvl.innerText = `LVL ${oppClan.clanLevel || 1}`;
@@ -2055,6 +2157,8 @@
       const ndlPct = ndlClan.destructionPercentage || 0;
       const oppPct = oppClan.destructionPercentage || 0;
       if (tugNdl && tugOpp) {
+        tugNdl.title = `${ndlClan.name || 'NDL'} Destruction: ${Number(ndlPct.toFixed(2))}%`;
+        tugOpp.title = `${oppNameStr} Destruction: ${Number(oppPct.toFixed(2))}%`;
         if (ndlPct === 0 && oppPct === 0) {
           tugNdl.style.width = '50%';
           tugOpp.style.width = '50%';
@@ -2066,32 +2170,43 @@
         }
       }
 
-      // Post-war outcome banner & directive controls
+      // Post-war outcome banner & directive controls (Strictly Leader-only for Broadcast button!)
       const postWarBtn = document.getElementById("postWarBroadcastBtn");
       const noticeIcon = document.getElementById("warFooterNoticeIcon");
       const noticeText = document.getElementById("warFooterNoticeText");
-      const isConcluded = war.state === 'warEnded';
+      const leaderLoggedIn = typeof isLeaderAuthenticated === 'function' && isLeaderAuthenticated();
 
       if (isConcluded) {
         const ourStars = ndlClan.stars || 0;
-        const oppStars = oppClan.stars || 0;
-        const ourDmg = ndlClan.destructionPercentage || 0;
-        const oppDmg = oppClan.destructionPercentage || 0;
-        const isWin = ourStars > oppStars || (ourStars === oppStars && ourDmg > oppDmg);
+        const oppStarsVal = oppClan.stars || 0;
 
         if (postWarBtn) {
-          postWarBtn.classList.remove("hidden");
-          postWarBtn.innerHTML = isWin
-            ? `<i class="fa-solid fa-trophy text-amber-900"></i> Victory Notice 🎲`
-            : `<i class="fa-solid fa-shield-heart text-amber-900"></i> Motivation Notice 🎲`;
+          if (leaderLoggedIn) {
+            postWarBtn.classList.remove("hidden");
+            postWarBtn.innerHTML = outcome === 'win'
+              ? `<i class="fa-solid fa-trophy text-amber-900"></i> Victory Notice 🎲`
+              : outcome === 'tie'
+                ? `<i class="fa-solid fa-handshake text-amber-900"></i> Draw Notice 🎲`
+                : `<i class="fa-solid fa-shield-heart text-amber-900"></i> Motivation Notice 🎲`;
+          } else {
+            postWarBtn.classList.add("hidden");
+          }
         }
         if (noticeIcon) {
-          noticeIcon.className = isWin ? "fa-solid fa-trophy text-emerald-400" : "fa-solid fa-shield-heart text-red-400";
+          noticeIcon.className = outcome === 'win'
+            ? "fa-solid fa-trophy text-emerald-400"
+            : outcome === 'tie'
+              ? "fa-solid fa-handshake text-amber-400"
+              : "fa-solid fa-shield-heart text-red-400";
         }
         if (noticeText) {
-          noticeText.innerText = isWin
-            ? `War concluded in VICTORY! (${ourStars}★ vs ${oppStars}★) Click Victory Notice to dispatch celebration mail.`
-            : `War concluded. (${ourStars}★ vs ${oppStars}★) Click Motivation Notice to dispatch regrouping directive.`;
+          if (outcome === 'win') {
+            noticeText.innerText = `War concluded in VICTORY! (${ourStars}★ vs ${oppStarsVal}★)${leaderLoggedIn ? ' — Click Victory Notice to dispatch celebration mail.' : ''}`;
+          } else if (outcome === 'tie') {
+            noticeText.innerText = `War concluded in a DRAW (${ourStars}★ vs ${oppStarsVal}★).`;
+          } else {
+            noticeText.innerText = `War concluded — ${oppNameStr} won (${oppStarsVal}★ vs ${ourStars}★).${leaderLoggedIn ? ' Click Motivation Notice to rally the clan.' : ' Analyze replays & prepare for next war!'}`;
+          }
         }
       } else {
         if (postWarBtn) postWarBtn.classList.add("hidden");
@@ -2602,6 +2717,18 @@
           }
         }
 
+        // 1.5 Fetch live clan info (Points, War Record, Clan Level, Capital)
+        const clanRes = await fetch(`${host}/api/clan`, { headers: reqHeaders }).catch(() => null);
+        if (clanRes && clanRes.ok) {
+          const clanContentType = clanRes.headers.get('content-type') || '';
+          if (clanContentType.includes('application/json')) {
+            const clanJson = await clanRes.json();
+            if (clanJson && clanJson.data && (clanJson.source === 'live' || (clanJson.data.tag || '').includes('2CVLCU8L9'))) {
+              updateClanInfoUI(clanJson.data);
+            }
+          }
+        }
+
         // 2. Fetch live member roster
         const res = await fetch(`${host}/api/members`, { headers: reqHeaders });
         const resContentType = res.headers.get('content-type') || '';
@@ -2636,21 +2763,27 @@
           updateLeaderUI();
         }
 
-        // 3. Fetch live war status & official Supercell countdown
+        // 3. Fetch live war status & official Supercell countdown / warlog fallback
         const warRes = await fetch(`${host}/api/war`, { headers: reqHeaders });
         const warContentType = warRes.headers.get('content-type') || '';
         if (warRes.ok && warContentType.includes('application/json')) {
           const warJson = await warRes.json();
-          if (warJson && warJson.data) {
+          if (warJson && warJson.data && warJson.data.state !== 'notInWar') {
             const clanName = (warJson.data.clan && warJson.data.clan.name) || '';
             const clanTag = (warJson.data.clan && warJson.data.clan.tag) || '';
-            if (clanTag.includes('2CVLCU8L9') || clanName.toUpperCase().includes('NDL') || clanName.toUpperCase().includes('N D L')) {
+            const isValidLive = (warJson.source === 'live' || warJson.source === 'live_warlog' || warJson.source === 'live_cached');
+            if (isValidLive || clanTag.includes('2CVLCU8L9') || clanName.toUpperCase().includes('NDL') || clanName.toUpperCase().includes('N D L')) {
               const prevAttacks = liveWar ? (liveWar.clan?.attacks || 0) : 0;
+              // Preserve existing members if new response lacks members (e.g. from pure warlog)
+              if ((!warJson.data.opponent?.members || warJson.data.opponent.members.length === 0) && liveWar?.opponent?.tag === warJson.data.opponent?.tag) {
+                warJson.data.clan.members = liveWar.clan?.members || [];
+                warJson.data.opponent.members = liveWar.opponent?.members || [];
+              }
               liveWar = warJson.data;
-              updateWarScoreboardUI(liveWar);
               updateWarCountdown();
+              updateWarScoreboardUI(liveWar);
               renderWarCalloutsTable(liveWar);
-              if (liveWar.clan && liveWar.clan.attacks > prevAttacks && prevAttacks > 0) {
+              if (liveWar.state === 'inWar' && liveWar.clan && liveWar.clan.attacks > prevAttacks && prevAttacks > 0) {
                 showToast(`⚔️ Live War Update: NDL has reached ${liveWar.clan.stars}★ with ${liveWar.clan.attacks} attacks!`);
               }
             }
@@ -2978,8 +3111,9 @@
         }
       }
 
-      // Re-render War Room callouts to toggle view-only vs interactive commands
+      // Re-render War Room callouts & scoreboard controls to toggle view-only vs leader actions
       if (liveWar) {
+        updateWarScoreboardUI(liveWar);
         renderWarCalloutsTable(liveWar);
       }
     }
@@ -3145,8 +3279,8 @@
       if (backendInput) backendInput.value = getApiHost();
 
       updateAllRosterUI(clanMembers);
-      updateWarScoreboardUI(liveWar);
       updateWarCountdown();
+      updateWarScoreboardUI(liveWar);
       renderWarCalloutsTable(liveWar);
 
       // 1. Second-by-second countdown clock ticker

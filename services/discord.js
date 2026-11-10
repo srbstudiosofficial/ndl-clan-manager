@@ -195,8 +195,11 @@ async function sendWarPhaseNotification(webhookUrl, war, clan, phase, roleMentio
     const enemyStars = war.opponent ? war.opponent.stars : 0;
     const ourDmg = war.clan.destructionPercentage || 0;
     const enemyDmg = war.opponent ? war.opponent.destructionPercentage || 0 : 0;
-    const isWin = ourStars > enemyStars || (ourStars === enemyStars && ourDmg > enemyDmg);
-    const isTie = ourStars === enemyStars && ourDmg === enemyDmg;
+    let isWin = ourStars > enemyStars || (ourStars === enemyStars && ourDmg > enemyDmg);
+    let isTie = ourStars === enemyStars && ourDmg === enemyDmg;
+    if (war.result === 'win' || war.warLogResult === 'win') { isWin = true; isTie = false; }
+    else if (war.result === 'lose' || war.warLogResult === 'lose') { isWin = false; isTie = false; }
+    else if (war.result === 'tie' || war.warLogResult === 'tie') { isWin = false; isTie = true; }
 
     let quoteText = '';
     let quoteTitle = '';

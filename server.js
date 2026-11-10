@@ -169,6 +169,17 @@ function enrichMembers(membersList) {
   });
 }
 
+function parseCocDateMs(str) {
+  if (!str) return null;
+  const match = str.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+  if (match) {
+    const [, y, m, d, hh, mm, ss] = match;
+    return Date.UTC(+y, +m - 1, +d, +hh, +mm, +ss);
+  }
+  const t = new Date(str).getTime();
+  return Number.isNaN(t) ? null : t;
+}
+
 // Generate Slacker Radar for War
 function analyzeWar(warData) {
   if (!warData || !warData.clan || !warData.clan.members) {
@@ -456,18 +467,76 @@ const server = http.createServer(async (req, res) => {
     }
 
     const result = await callCocApi('/clans/{tag}/currentwar');
-    if (result.success) {
-      try {
-        fs.writeFileSync(path.join(__dirname, 'data', 'liveWar.json'), JSON.stringify(result.data, null, 2));
-      } catch (e) {}
-      const analyzed = analyzeWar(result.data);
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ source: 'live', data: analyzed }));
+    if (result.success && result.data) {
+      if (result.data.state !== 'notInWar' && result.data.clan && result.data.clan.tag) {
+        try {
+          fs.writeFileSync(path.join(__dirname, 'data', 'liveWar.json'), JSON.stringify(result.data, null, 2));
+        } catch (e) {}
+        const analyzed = analyzeWar(result.data);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ source: 'live', data: analyzed }));
+      } else {
+        // Clan is currently notInWar: fetch official result from /warlog!
+        let warLogEntry = null;
+        try {
+          const logRes = await callCocApi('/clans/{tag}/warlog');
+          if (logRes.success && logRes.data && logRes.data.items && logRes.data.items.length > 0) {
+            warLogEntry = logRes.data.items[0];
+          }
+        } catch (e) {}
+
+        let savedWar = null;
+        try {
+          const rawSaved = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'liveWar.json'), 'utf8'));
+          if (rawSaved && rawSaved.clan && rawSaved.clan.tag) savedWar = rawSaved;
+        } catch (e) {}
+
+        if (warLogEntry) {
+          const sameOpponent = savedWar && savedWar.opponent && warLogEntry.opponent && savedWar.opponent.tag === warLogEntry.opponent.tag;
+          const endMs = parseCocDateMs(warLogEntry.endTime);
+          const startIso = endMs ? new Date(endMs - 24 * 3600 * 1000).toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, '.000Z') : null;
+          const oppAttacksAccurate = (sameOpponent && savedWar.opponent && savedWar.opponent.attacks > 0 && savedWar.opponent.stars === warLogEntry.opponent.stars)
+            ? savedWar.opponent.attacks
+            : null;
+
+          const combinedWar = {
+            state: 'warEnded',
+            isLastWar: true,
+            warLogResult: warLogEntry.result, // 'win', 'lose', 'tie'
+            teamSize: warLogEntry.teamSize,
+            attacksPerMember: warLogEntry.attacksPerMember || 2,
+            battleModifier: warLogEntry.battleModifier || 'none',
+            startTime: (sameOpponent && savedWar.startTime) ? savedWar.startTime : startIso,
+            endTime: warLogEntry.endTime,
+            clan: {
+              ...warLogEntry.clan,
+              members: (sameOpponent && savedWar.clan && savedWar.clan.members) ? savedWar.clan.members : []
+            },
+            opponent: {
+              ...warLogEntry.opponent,
+              attacks: oppAttacksAccurate,
+              members: (sameOpponent && savedWar.opponent && savedWar.opponent.members) ? savedWar.opponent.members : []
+            }
+          };
+
+          const analyzed = analyzeWar(combinedWar);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ source: 'live_warlog', data: analyzed }));
+        } else if (savedWar) {
+          const analyzed = analyzeWar(savedWar);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ source: 'live_cached', data: analyzed }));
+        } else {
+          const analyzed = analyzeWar(result.data);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ source: 'live', data: analyzed }));
+        }
+      }
     } else {
       let fallbackWar = demoCurrentWar;
       try {
         const savedWar = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'liveWar.json'), 'utf8'));
-        if (savedWar && savedWar.clan) fallbackWar = savedWar;
+        if (savedWar && savedWar.clan && savedWar.clan.tag) fallbackWar = savedWar;
       } catch (e) {}
       const analyzed = analyzeWar(fallbackWar);
       res.writeHead(200, { 'Content-Type': 'application/json' });
