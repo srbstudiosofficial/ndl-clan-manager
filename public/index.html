@@ -1119,7 +1119,7 @@
 
         <div>
           <label class="text-slate-300 font-bold block mb-1">Clash Mail Body (Max 250 Chars in-game)</label>
-          <textarea id="mailTextContent" rows="4" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-xs text-slate-200 focus:outline-none focus:border-amber-500" placeholder="Type custom directive or choose a tactical preset above..."></textarea>
+          <textarea id="mailTextContent" rows="4" oninput="this.dataset.userEdited='true'" class="w-full bg-[#090c12] border border-[#1e2a3d] rounded p-2 font-mono text-xs text-slate-200 focus:outline-none focus:border-amber-500" placeholder="Type custom directive or choose a tactical preset above..."></textarea>
         </div>
 
         <div>
@@ -2105,9 +2105,9 @@
         warAudienceOpt.value = `Active ${teamSizeNum}v${teamSizeNum} War Roster`;
       }
 
-      // Auto-update mail textarea if empty or holding legacy text
+      // Auto-update mail textarea if user hasn't manually edited it
       const mailBox = document.getElementById("mailTextContent");
-      if (mailBox && (!mailBox.value || mailBox.value.includes('solo player') || mailBox.value.includes('NDL DIRECTIVE: War Prep'))) {
+      if (mailBox && mailBox.dataset.userEdited !== 'true') {
         mailBox.value = isConcluded ? getDynamicMailTemplate('auto_postwar') : getDynamicMailTemplate('prep');
       }
 
@@ -2210,6 +2210,16 @@
         }
       } else {
         if (postWarBtn) postWarBtn.classList.add("hidden");
+        if (noticeIcon) {
+          noticeIcon.className = war.state === 'preparation'
+            ? "fa-solid fa-triangle-exclamation text-amber-400"
+            : "fa-solid fa-fire text-red-400";
+        }
+        if (noticeText) {
+          noticeText.innerText = war.state === 'preparation'
+            ? `Preparation Day active vs '${oppNameStr}' — Fill defensive War Clan Castles & review base callouts!`
+            : `Battle Day LIVE vs '${oppNameStr}' — Coordinate cleanup attacks & use both war attacks before close!`;
+        }
       }
     }
 
@@ -3190,8 +3200,9 @@
         m.classList.add("flex");
         if (id === 'draftMailModal') {
           const box = document.getElementById("mailTextContent");
-          if (box && (!box.value || box.value.includes('solo player') || box.value.includes('NDL DIRECTIVE: War Prep'))) {
-            box.value = getDynamicMailTemplate('prep');
+          if (box && box.dataset.userEdited !== 'true') {
+            const isConcluded = liveWar && (liveWar.state === 'warEnded' || liveWar.isLastWar);
+            box.value = isConcluded ? getDynamicMailTemplate('auto_postwar') : getDynamicMailTemplate('prep');
           }
         }
       }
@@ -3237,6 +3248,7 @@
     function setTemplate(type) {
       const box = document.getElementById("mailTextContent");
       if (!box) return;
+      box.dataset.userEdited = 'false';
       box.value = getDynamicMailTemplate(type);
       if (type === 'win') {
         showToast('🏆 Rolled random War Victory celebration message!');
